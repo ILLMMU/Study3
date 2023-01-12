@@ -1,0 +1,2157 @@
+---
+title             : "The title"
+shorttitle        : "Title"
+
+author: 
+  - name          : "Mushfiqul Anwar Siraji"
+    affiliation   : "1"
+    email         : "mushfiqul.anwarsiraji@monash.edu"
+    role:         
+      - Conceptualization
+      - Data curation
+      - Investigation
+      - Project administration
+      - Methodology
+      - Formal Analysis
+      - Visualization
+      - Writing - Original Draft Preparation
+      - Writing - Review & Editing
+  - name          : "Yi Jiau Saw"
+    affiliation   : "2"
+    email         : "mushfiqul.anwarsiraji@monash.edu"
+    role:         
+      - Conceptualization
+      - Investigation
+      - Data curation
+      - Writing - Review & Editing
+  - name          : "Vineetha Kalavally"
+    affiliation   : "2"
+    role:
+      - Conceptualization
+      - Project administration
+      - Methodology
+      - Writing – original draft
+      - Writing – review & editing
+  - name          : "Shamsul Haque"
+    affiliation   : "1"
+    corresponding : yes    # Define only one corresponding author
+    address       : "Postal address"
+    email         : "email"
+    role:
+      - Conceptualization
+      - Project administration
+      - Methodology
+      - Writing – original draft
+      - Writing – review & editing
+
+affiliation:
+  - id            : "1"
+    institution   : "Monash University, Department of Psychology, Jeffrey Cheah School of Medicine and Health Sciences, Malaysia"
+  - id            : "2"
+    institution   : "Monash University, Department of Electrical and Computer Systems Engineering, Malaysia, Selangor, Malaysia"
+
+authornote: |
+  Add complete departmental affiliations for each author here. Each new line herein must be indented, like this line.
+
+  Enter author note here.
+
+abstract: |
+  One or two sentences providing a **basic introduction** to the field,  comprehensible to a scientist in any discipline.
+  
+  Two to three sentences of **more detailed background**, comprehensible  to scientists in related disciplines.
+  
+  One sentence clearly stating the **general problem** being addressed by  this particular study.
+  
+  One sentence summarizing the main result (with the words "**here we show**" or their equivalent).
+  
+  Two or three sentences explaining what the **main result** reveals in direct comparison to what was thought to be the case previously, or how the  main result adds to previous knowledge.
+  
+  One or two sentences to put the results into a more **general context**.
+  
+  Two or three sentences to provide a **broader perspective**, readily comprehensible to a scientist in any discipline.
+  
+
+  
+keywords          : "keywords"
+wordcount         : "X"
+
+bibliography      : ["r-references.bib", "library.bib"]
+
+floatsintext      : no
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+linenumbers       : yes
+mask              : no
+draft             : no
+
+
+documentclass     : "apa6"
+classoption       : "man"
+output            : 
+  papaja::apa6_docx:
+    
+mainfont: Arial
+---
+
+
+```{r setup, warning=FALSE, include=FALSE}
+#This chunk controls the common chunk parameters for the whole manuscript
+knitr::opts_chunk$set(echo = FALSE, warning = F, message = F, dpi=300, fig.width = 6,
+ fig.asp = 0.8,out.width = "80%", dev=c('png','postscript'))
+#options(knitr.duplicate.label = "allow")
+set.seed(2022)
+par(family = "Arial")
+```
+
+```{r library, include = FALSE}
+library(papaja) # devtools::install_github("crsh/papaja")
+library(MOTE)
+library(psych)
+library(tidyverse)
+library(readr)
+library(ggsci)
+library(ggtext)
+library(ggpubr)
+library(WRS2)
+library(gtsummary)
+library(gt)
+library(readxl)
+library(glue)
+library(ggtext)
+library(kableExtra)
+library(tabledown)
+# renv::snapshot()
+r_refs("library.bib")
+```
+
+```{r ggplot2, include=F}
+#This chunk holds code for creating ggplot2 based apatheme for plots.
+apatheme=theme_bw()+
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.text.x = element_text(size = 8),
+        axis.text.y = element_text(size = 8),
+        axis.title.x = element_text(size = 8),
+        axis.title.y = element_text(size = 8),
+        plot.title = element_text(size = 10),
+        legend.text = element_text(size =10),
+        legend.title=element_blank(),
+        axis.line.x = element_line(color='black'),
+        axis.line.y = element_line(color='black'),
+        panel.border = element_rect(color = "black",
+                                    fill = NA,
+                                    size = 1))
+```
+
+```{r light-spectrum-curve}
+ls <- read_csv("Processeddata/Luox output/SPD_80_cm_horizontal_luox_out_SPD.csv")
+ls.2 <- ls %>%
+    pivot_longer(cols = 2:4,
+               names_to = "Condition",
+               values_to = ("value"))
+ls.3 <- ls.2
+ls.3$Condition <- as.factor(ls.3$Condition)
+ls.3$value <- ls.3$value *100
+
+## Reordering ls.3$Condition
+ls.3$Condition <- ls.3$Condition %>%
+  fct_relevel(
+     "High","Medium","Low",
+  )
+
+spectrum <- ggplot(ls.3, aes(x= Wavelength, y= value, color = Condition))+ geom_line()+apatheme+
+  xlab("Wavelength(nm)")+scale_x_continuous(breaks=c(380, 420, 460, 500, 540, 580, 620, 660, 700, 740, 780), limits = c(380,780))+theme(legend.position = "bottom")+
+  ylab(expression("Spectral irradiance" (μW/cm^2/nm)))+
+  scale_color_manual(values=c('blue','grey', "yellow2"))
+
+
+
+
+ggsave("Figures/spectrum.png",spectrum, width=4.5, height=3.5)
+
+```
+
+
+```{r plot-legends}
+Low <- "Low"
+Neutral <- "Neutral"
+High <- "High"
+
+
+Low_color <- "yellow"
+Neutral_color <- "grey"
+High_color <- "blue"
+
+```
+
+
+```{r data}
+data <- read_excel("Processeddata/Study_2_Full_data_N_24.xlsx")
+light_indices <- read_csv("Processeddata/alpha_opic_indices_data.csv")
+
+
+
+light_indices_summary <- light_indices %>% 
+  group_by(Group) %>% 
+  summarise(mean_photopic = mean(`Photopic lx`),
+            sd_photopic = sd(`Photopic lx`))
+
+
+```
+
+
+
+# Methods
+
+We report how we determined our sample size, all data exclusions (if any), all manipulations, and all measures in the study. <!-- 21-word solution (Simmons, Nelson & Simonsohn, 2012; retrieved from http://ssrn.com/abstract=2160588) -->
+
+## Participants
+
+```{r prepareDescTable, include=FALSE}
+#This chunk holds code for demographic data wrangling.
+
+demographics <-   data %>% 
+  dplyr::select(Light_Settings, Age, Gender,marital_status, eductation, Sleep_qlty,  Chronotype_category)
+
+demographics$Age <- as.numeric(demographics$Age)
+
+# create descriptive table for the demographic vars (excluding tz & Country) with gtsummary
+ desc_table <- demographics %>%
+  tbl_summary(
+    by = Light_Settings,
+    statistic = list(all_continuous() ~ "{mean} ({sd})",
+                     all_categorical() ~ "{n} ({p}%)"),
+    type =list(Age~ 'continuous'), 
+                     
+    digits = all_continuous() ~ 2,
+    label = list(Age ~ "Age",
+                 Gender ~ "Gender",
+                eductation ~ "Education",
+                 marital_status ~ "Marital Status",
+                 Sleep_qlty ~ "Sleep Quality",
+                 Chronotype_category~ "Chronotype"
+                 ),
+    
+    missing = "no"
+    ) %>% add_overall() %>% bold_labels() %>% 
+  # add_p() %>% add_q() %>%
+modify_header(label ~ "**Variable**") %>% 
+  # separate_p_footnotes() %>%
+  modify_caption("Demographic Characteristics of Participants (n=15).") 
+
+
+desc_kable <- as_hux_table(desc_table)  #save it as a knitr::kable
+
+desc_tibble <- as.tibble(desc_table)
+
+
+description_group <- psych::describe.by(demographics,  "Light_Settings")
+
+description <- psych::describe(demographics)
+description_gender <- psych::describe.by(demographics,  "Gender")
+
+```
+
+Twenty four healthy university students age ranging between `r description$min[2]`-`r description$max[2]`( mean age ± SD:`r MOTE::apa(description$mean[2],2,T)`±`r MOTE::apa(description$sd[2],2,T)`)- 16 females, (Mean age ± SD = `r MOTE::apa(description_gender$Female$mean[2],2,T)`±`r MOTE::apa(description_gender$Female$sd[2],2,T)` ) and 8 males (Mean age ± SD = `r MOTE::apa(description_gender$Male$mean[2],2,T)`±`r MOTE::apa(description_gender$Male$sd[2],2,T)` ) were studies in the Intelligent Lighting Lab at Monash University Malaysia. The study obtained ethics clearance from the Monash University Human Research Ethics Committee (Project ID: 14786) and participants provided written informed consent prior to study. All participants reported to be free from medial and psychological conditions and had no color blindness  (tested by Ishihara Blindness Test [@clark1924ishihara]). Majority of them were poor sleeper (`r desc_tibble[12,2]`) and had intermediate chronotype (`r desc_tibble[15,2]`).
+
+
+```{r demotab, warning=F, message=F}
+apa_table(desc_kable)
+
+```
+
+
+## Light Exposure Conditions
+The experimental site was at Intelligent Light Lab, Monash University Malaysia (length x width x height; xx m by xx m by xx m). The lab was furnished with one ractangular working desk with three chairs. The walls of the lab was covered with grey cartains and all glass windows were covered by blackout blinds. The room temperature was set to 25$^0$ C. The three light conditions were generated using 12 Phillips tuneable LED ceiling mounted luminaries. We have measured the light sources at the horizontal plane at desk level (80 cm) and the vertical plane at eye level of the participants seated at the desk (122 cm). Figure XX  depicts the spectral composition of the three light conditions. Table XX presents alpha-opic melanopic equivalent daylight illuminances (Melanopic EDI) and melanopic daylight efficacy ratio (MDER) values both at desk and eyelevel for the three light conditions: (a) high MDER light settings (HM):`r light_indices[1,10]` MDER, `r light_indices[1,6]` MEDI, `r light_indices[1,11]` K; (b) neutral MDER light settings (NM):`r light_indices[2,10]` MDER, `r light_indices[2,6]` MEDI, `r light_indices[2,11]` K;  and (c) low MDER light settings (LM): `r light_indices[3,10]` MDER, `r light_indices[3,6]` MEDI, `r light_indices[3,11]` K. For all light conditions At the beginning of each sessions the light exposure level was maintained at approximately 250 photopic lx at the horizontal plane (79.23 μW/cm$^2$) and approximately 139 lx (42.79 μW/cm$^2$) at the vertical plane for thirty minutes. After this adaptation period, the photopic lx of  three light settings were kept ~250 lx at desk level (Mean=`r MOTE::apa(light_indices_summary$mean_photopic[1],2,T)`; SD=±`r MOTE::apa(light_indices_summary$sd_photopic[2],2,T)`). In vertical plane at eye level the mean photopic lx was `r MOTE::apa(light_indices_summary$mean_photopic[1],2,T)` (SD=±`r MOTE::apa(light_indices_summary$sd_photopic[2],2,T)`). The α-opic values and MDER values are obtained using Loux software (Spitschan et al., 2022) and CIE S 026:2018 toolbox (Schlangen, 2020) following the CIE S 026 guidelines (CIE, 2018b). 
+
+
+## Study Protocol
+Participants were asked not to ingest any caffeine and drink alcohol on the experiment day. Each session started with a practice block to familiarize the participants with the cognitive tests. Each participant spent approximately two hours in our lab in a time cue free environment (all doors and windows covered with blinds, no watches, internet, mobile, TV, newspaper and radio). Participants were randomly assigned to one the light conditions and were allowed thirty minutes to attune to the light condition. During this thirty minutes they answered a series of a questionnaire regarding their demographic information sleep quality, chronotype and completed Ishihara Blindness Test [@clark1924ishihara]. Throughout the two hour protocol participants remained seated at their desks. Exercising and napping were not allowed. Participants took part in a series of cognitive tests in the following order: aPVT, N-back test, digit span, and Tower of London test . Subjective measures of sleepiness  were recorded both at the beginning and the end of the protocol.
+
+## Data analysis
+
+We used R [@R-base] for all our analyses using packages including psych [@R-psych], tabledown, and WRS2 [@R-WRS2]. Classical ANOVA methods assumes normality and homoscedascity and any violation to these assumptions raise serious practical concerns. Hence we used 10% trimmed mean based robust oneway or factorial anova which were less prone to these these assumption violations and outliers [@R-WRS2]. "t1way"  and "bwtrim" functions from the package "WRS2"[@R-WRS2] were used to conduct the robust oneway and factorial ANOVA respectively. We reported$\xi$ as the explanatory measure of the effect size where 0.10, 0.30, 0.50 correspond to small, medium and large effect size. The confidence interval of the effect size was estimated using 1000 bootstrap samples [@wilcox2011measuring]. In case of a significant F statistics we conducted robust pairwise post-hoc tests to compare  the three light conditions using "lincon" function with Bonferroni correction from WRS2.   
+
+# Results
+
+## Alerting effects
+
+We observed a significant differences in subjective sleepiness across the three light settings [F(2,11.7)=4.85, p=0.03, $\xi$ = 0.69 (CI: 0.42-1.04)]. Post-hoc tests revealed that there was a trend of reporting decreased subjective sleepiness (beginning of the protocol vs end of the protocol) in High condition compared to Low ($\hat{\psi}$ =--1.71; p=0.09) and Neutral ($\hat{\psi}$ = --1.86; p=0.07) light conditions. No significant difference between Low and neutral light condition was observed (p=1.0).
+
+In aPVT, we did not observe any significant effect of light conditions on general reaction time [F(2,10.1)=1.29, p=0.32, $\xi$ = 0.54 (CI: 0.21-1.03)], attention lapses [F(2,10.99)=0.49, p=0.63, $\xi$ = 0.34 (CI: 0.07-0.73)], and 10% fastest reaction time [F(2,12.21)=0.09, p=0.91, $\xi$ = 0.29 (CI: 0.06-0.66) ]
+
+
+```{r Kss-anova}
+
+KSS <- data %>% 
+  dplyr::select ("Light_Settings", "KSS_DIF")
+
+
+KSS_summary <- KSS %>% 
+  group_by(Light_Settings) %>% 
+  summarise(Mean=mean(KSS_DIF),
+            SD= sd(KSS_DIF),
+            n = n(),
+            SEM = SD / sqrt(n))
+
+
+kss_robust_model <- WRS2::t1way(KSS_DIF ~ Light_Settings, data = KSS, tr=.1, nboot = 1000)
+# WRS2::t1way(KSS_DIF ~ Light_Settings, data = KSS,  nboot = 1000)
+post_hoc_kss <- WRS2::lincon(KSS_DIF ~ Light_Settings, data = KSS,method="bonferroni", tr=.1, nboot = 1000)
+
+
+WRS2::yuen.effect.ci(KSS_DIF ~ Light_Settings, data = KSS)
+
+
+```
+
+```{r kss-anova-plot,include=FALSE}
+metadata_kss <- KSS %>%
+  mutate(Condition = factor(Light_Settings,
+                               levels=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"
+                                        )))
+
+
+
+kss_plot <- metadata_kss %>%
+  ggplot(aes(x= Light_Settings, y = KSS_DIF, fill = Light_Settings)) +
+  stat_summary(fun.data = mean_se, geom = "errorbar", width =0.5)+ 
+  stat_summary(fun.data = mean_se, geom = "bar", show.legend = FALSE,width = .5)+
+  # geom_jitter(show.legend=FALSE, width=0.25, shape=21, color="black") +
+  labs(x=NULL,
+       y="Subjective Sleepiness (\u0394 KSS)")+
+  scale_x_discrete(breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+                   labels=c(Low, Neutral, High))+
+  scale_fill_manual(name=NULL,
+                    breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+                    labels=c(Low, Neutral, High),
+                    values=c(Low_color, Neutral_color, High_color)) +
+  apatheme +
+  theme(axis.text.x = element_markdown())+
+  # scale_y_continuous(expand = expansion(mult = c(0, .1)), breaks= c(-2,-1,0,1,2,3))+
+  geom_hline(yintercept=0)
+
+
+lines <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_lines = c(1,1,2),
+  xend_lines = c(1.95,3,3),
+  y_lines = c(2, 2.5, 2),
+  yend_lines = y_lines
+  
+)
+
+
+vlines_left <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_vlines_left = lines$x_lines,
+  xend_vlines_left = lines$x_lines,
+  y_vlines_left = lines$y_lines-0.05,
+  yend_vlines_left = lines$y_lines
+  
+)
+
+vlines_right <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_vlines_right  = lines$xend_lines,
+  xend_vlines_right = lines$xend_lines,
+  y_vlines_right = vlines_left$y_vlines_left,
+  yend_vlines_right = lines$y_lines
+  
+)
+
+stars <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  
+  x = c(1.5,2, 2.5),
+  
+  y = lines$y_lines+.2,
+  label =c("n.s",  "p=.0.09", "p=0.07")
+)
+
+
+anova_kss_plot <- kss_plot +
+  geom_segment(data=lines, aes(x =x_lines, xend =xend_lines, y=y_lines, yend=yend_lines), inherit.aes = F)+
+  geom_segment(data=vlines_left, aes(x =x_vlines_left, xend =xend_vlines_left, y=y_vlines_left, yend=yend_vlines_left), inherit.aes = F)+
+  geom_segment(data=vlines_right, aes(x =x_vlines_right, xend =xend_vlines_right, y=y_vlines_right, yend=yend_vlines_right), inherit.aes = F)+
+geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 3) 
+
+# ggsave("Figures/Figure7.png", width=9, height=7)
+
+# ggsave("Figures/anova_pvt_miss.png", width=4.5, height=3.5)
+
+```
+
+```{r apvt}
+aPVT <- data %>% 
+  dplyr::select ("Light_Settings", "aPVT_RT", "total_miss_aPVT", "10%_fastest")
+
+
+
+
+aPVT_summary <-aPVT %>% 
+  group_by(Light_Settings) %>% 
+  summarise(Mean_rt=mean(aPVT_RT*1000),
+            SEM_rt = sd(aPVT_RT*1000) / sqrt(n()),
+            Mean_miss=mean(total_miss_aPVT),
+            SEM_miss = sd(total_miss_aPVT) / sqrt(n()),
+            Mean_fast=mean(`10%_fastest`),
+            SEM_fast = sd(`10%_fastest`) / sqrt(n()))
+
+# Robust variation of ANOVA: not significant effect
+aPVT$Light_Settings <- as.factor(aPVT$Light_Settings)
+
+
+
+apvt_rt_robust_model <- WRS2::t1way(aPVT_RT*1000 ~ Light_Settings, data = aPVT, tr=.1,nboot = 1000)
+
+apvt_miss_robust_model <- WRS2::t1way(total_miss_aPVT ~ Light_Settings, data = aPVT,tr=.1,nboot = 1000)
+
+apvt_fast_robust_model <- WRS2::t1way(`10%_fastest` ~ Light_Settings, data = aPVT,tr=.1,nboot = 1000)
+
+
+
+
+
+
+
+```
+
+```{r PVT-rt-anova-plot,include=FALSE}
+metadata_pvt <- aPVT %>%
+  mutate(Condition = factor(Light_Settings,
+                               levels=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"
+                                        )))
+
+metadata_pvt$aPVT_RT2 <- metadata_pvt$aPVT_RT*1000
+
+pvt_rt_plot <- metadata_pvt %>%
+  ggplot(aes(x= Light_Settings, y = aPVT_RT2, fill = Light_Settings)) +
+  stat_summary(fun.data = mean_se,  geom = "errorbar", width =0.5)+ 
+  stat_summary(fun.data = mean_se, geom = "bar", show.legend = FALSE,width = .5)+
+  # geom_jitter(show.legend=FALSE, width=0.25, shape=21, color="black") +
+  labs(x=NULL,
+       y="General Reaction Time (ms)")+
+  scale_x_discrete(breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+                   labels=c(Low, Neutral, High))+
+  scale_fill_manual(name=NULL,
+                    breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+                    labels=c(Low, Neutral, High),
+                    values=c(Low_color, Neutral_color, High_color)) +
+  apatheme +
+  theme(axis.text.x = element_markdown())+
+  scale_y_continuous(expand = expansion(mult = c(0, .1)))
+
+
+lines <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_lines = c(1,1,2),
+  xend_lines = c(1.95,3,3),
+  y_lines = c(600, 650, 600),
+  yend_lines = y_lines
+  
+)
+
+
+vlines_left <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_vlines_left = lines$x_lines,
+  xend_vlines_left = lines$x_lines,
+  y_vlines_left = lines$y_lines-5,
+  yend_vlines_left = lines$y_lines
+  
+)
+
+vlines_right <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_vlines_right  = lines$xend_lines,
+  xend_vlines_right = lines$xend_lines,
+  y_vlines_right = vlines_left$y_vlines_left,
+  yend_vlines_right = lines$y_lines
+  
+)
+
+stars <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  
+  x = c(1.5,2, 2.5),
+  
+  y = c(630, 680, 630),
+  label =c("n.s",  "n.s", "n.s")
+)
+
+
+anova_pvt_rt_plot <- pvt_rt_plot +
+  geom_segment(data=lines, aes(x =x_lines, xend =xend_lines, y=y_lines, yend=yend_lines), inherit.aes = F)+
+  geom_segment(data=vlines_left, aes(x =x_vlines_left, xend =xend_vlines_left, y=y_vlines_left, yend=yend_vlines_left), inherit.aes = F)+
+  geom_segment(data=vlines_right, aes(x =x_vlines_right, xend =xend_vlines_right, y=y_vlines_right, yend=yend_vlines_right), inherit.aes = F)+
+geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 3) 
+
+
+# ggsave("Figures/anova_pvt_miss.png", width=4.5, height=3.5)
+
+```
+
+```{r PVT-fast-anova-plot,include=FALSE}
+metadata_pvt <- aPVT %>%
+  mutate(Condition = factor(Light_Settings,
+                               levels=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"
+                                        )))
+
+metadata_pvt$`10%_fastest2` <- metadata_pvt$`10%_fastest`*1000
+
+pvt_fast_plot <- metadata_pvt %>%
+  ggplot(aes(x= Light_Settings, y = `10%_fastest2`, fill = Light_Settings)) +
+  stat_summary(fun.data = mean_se, geom = "errorbar", width =0.5)+ 
+  stat_summary(fun.data = mean_se, geom = "bar", show.legend = FALSE,width = .5)+
+  # geom_jitter(show.legend=FALSE, width=0.25, shape=21, color="black") +
+  labs(x=NULL,
+       y="10% Fastest Reaction Time (ms)")+
+  scale_x_discrete(breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+                   labels=c(Low, Neutral, High))+
+  scale_fill_manual(name=NULL,
+                    breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+                    labels=c(Low, Neutral, High),
+                    values=c(Low_color, Neutral_color, High_color)) +
+  apatheme +
+  theme(axis.text.x = element_markdown())+
+  scale_y_continuous(expand = expansion(mult = c(0, .1)))
+
+
+lines <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_lines = c(1,1,2),
+  xend_lines = c(1.95,3,3),
+  y_lines = c(400, 450, 400),
+  yend_lines = y_lines
+  
+)
+
+
+vlines_left <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_vlines_left = lines$x_lines,
+  xend_vlines_left = lines$x_lines,
+  y_vlines_left = lines$y_lines-10,
+  yend_vlines_left = lines$y_lines
+  
+)
+
+vlines_right <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_vlines_right  = lines$xend_lines,
+  xend_vlines_right = lines$xend_lines,
+  y_vlines_right = vlines_left$y_vlines_left,
+  yend_vlines_right = lines$y_lines
+  
+)
+
+stars <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  
+  x = c(1.5,2, 2.5),
+  
+  y = c(420, 470, 420),
+  label =c("n.s",  "n.s", "n.s")
+)
+
+
+anova_pvt_fast_plot <- pvt_fast_plot  +
+  geom_segment(data=lines, aes(x =x_lines, xend =xend_lines, y=y_lines, yend=yend_lines), inherit.aes = F)+
+  geom_segment(data=vlines_left, aes(x =x_vlines_left, xend =xend_vlines_left, y=y_vlines_left, yend=yend_vlines_left), inherit.aes = F)+
+  geom_segment(data=vlines_right, aes(x =x_vlines_right, xend =xend_vlines_right, y=y_vlines_right, yend=yend_vlines_right), inherit.aes = F)+
+geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 3) 
+
+
+# ggsave("Figures/anova_pvt_miss.png", width=4.5, height=3.5)
+
+```
+
+```{r PVT-miss-anova-plot,include=FALSE}
+metadata_pvt <- aPVT %>%
+  mutate(Condition = factor(Light_Settings,
+                               levels=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"
+                                        )))
+
+
+
+pvt_miss_plot <- metadata_pvt %>%
+  ggplot(aes(x= Light_Settings, y = total_miss_aPVT, fill = Light_Settings)) +
+  stat_summary(fun.data = mean_se, geom = "errorbar", width =0.5)+ 
+  stat_summary(fun.data = mean_se, geom = "bar", show.legend = FALSE,width = .5)+
+  # geom_jitter(show.legend=FALSE, width=0.25, shape=21, color="black") +
+  labs(x=NULL,
+       y="PVT: Attention Lapses")+
+  scale_x_discrete(breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+                   labels=c(Low, Neutral, High))+
+  scale_fill_manual(name=NULL,
+                    breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+                    labels=c(Low, Neutral, High),
+                    values=c(Low_color, Neutral_color, High_color)) +
+  apatheme +
+  theme(axis.text.x = element_markdown())+
+  scale_y_continuous(expand = expansion(mult = c(0, .1)))
+
+
+lines <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_lines = c(1,1,2),
+  xend_lines = c(1.95,3,3),
+  y_lines = c(15, 17, 15),
+  yend_lines = y_lines
+  
+)
+
+
+vlines_left <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_vlines_left = lines$x_lines,
+  xend_vlines_left = lines$x_lines,
+  y_vlines_left = lines$y_lines-0.2,
+  yend_vlines_left = lines$y_lines
+  
+)
+
+vlines_right <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_vlines_right  = lines$xend_lines,
+  xend_vlines_right = lines$xend_lines,
+  y_vlines_right = vlines_left$y_vlines_left,
+  yend_vlines_right = lines$y_lines
+  
+)
+
+stars <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  
+  x = c(1.5,2, 2.5),
+  
+  y = lines$y_lines+1,
+  label =c("n.s",  "n.s", "n.s")
+)
+
+
+anova_pvt_miss_plot <- pvt_miss_plot  +
+  geom_segment(data=lines, aes(x =x_lines, xend =xend_lines, y=y_lines, yend=yend_lines), inherit.aes = F)+
+  geom_segment(data=vlines_left, aes(x =x_vlines_left, xend =xend_vlines_left, y=y_vlines_left, yend=yend_vlines_left), inherit.aes = F)+
+  geom_segment(data=vlines_right, aes(x =x_vlines_right, xend =xend_vlines_right, y=y_vlines_right, yend=yend_vlines_right), inherit.aes = F)+
+geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 3) 
+
+
+# ggsave("Figures/anova_pvt_miss.png", width=4.5, height=3.5)
+
+```
+
+```{r eval=FALSE, include=FALSE}
+#Publication plot
+
+library(ggsignif)
+
+b <- ggplot(aPVT, aes(x = Light_Settings, y = aPVT_RT)) +
+ stat_summary(fun.data = mean_se, geom = "errorbar", width =0.5)+ 
+  stat_summary(fun.data = mean_se, geom = "bar", show.legend = FALSE,width = .5)+
+  geom_jitter(show.legend=FALSE, width=0.25, shape=21, color="black")+
+  scale_x_discrete() + xlab("Light Settings") +
+  ylab("Reaction Time") +
+  geom_signif( comparisons = list(c("MELR 1.0_high", "MELR 0.7_neutral"), c("MELR 0.7_neutral","MELR 0.5_low"),c("MELR 1.0_high", "MELR 0.5_low")), map_signif_level=T,step_increase=T)
+
+```
+
+```{r eval=FALSE, include=FALSE}
+robust <- t1way(aPVT_RT~Light_Settings, aPVT, alpha = 0.05, tr =.2,nboot = 1000)
+t1way(aPVT_RT~Light_Settings, aPVT, alpha = 0.05) #Median
+lincon(aPVT_RT~Light_Settings, aPVT, alpha = 0.05, tr =.1,nboot = 1000)#Robust posthoc
+
+```
+
+```{r alerting-plot, include =F}
+
+alertness_plot <- cowplot::plot_grid(anova_kss_plot, anova_pvt_rt_plot , anova_pvt_fast_plot,anova_pvt_miss_plot,
+                            
+                   labels = "AUTO",
+                   ncol=2,nrow=2,
+                   label_size = 7,
+                  align = "v",
+                  label_fontfamily = "Arial",
+                  label_fontface = "plain")
+ggsave("Figures/alertness.png",alertness_plot, width=7, height=4.5)
+
+
+
+
+```
+
+(ref:alert) Panel A-D depicts the one-way ANOVA results comparing the light conditions' effect on : (A) subjective sleepiness, (B) general reaction time, and (C) attention lapses and (D) 10% fastest reaction time. Each bar represents the mean ± standard error of measurements. 
+
+```{r fig1, fig.align= 'center', fig.cap='(ref:alert)',  warning=FALSE,  out.height='100%', out.width='100%'}
+
+knitr::include_graphics('Figures/alertness.png', dpi =300)
+
+```
+
+## Working Memory and Executive Functioning
+
+We observed a significant differences in forward digit span task across the three light settings [F(2,12.14)=4.99, p=0.03, $\xi$ = 0.59 (CI: 0.34-0.82)]. Post-hoc tests revealed that participants performaed significantly better in Neutral condition compared to Low light condition ($\hat{\psi}$=-1.57, p<0.04). No other pair-wise comparison in Forward digit span was significant. We did not observe any significant differences in backward [F(2,12.11)=0.33, p=0.72, $\xi$ = 0.37 (CI: 0.07-0.88)] and sequential digit span task performance [F(2,12.05)=0.54, p=0.60, $\xi$ = 0.41 (CI: 0.1-0.74)].
+
+In the ToL task we observed a significant effect of light condition on execution time [F(2,11.47)=4.38, p=0.04, $\xi$ = 0.59 (CI: 0.31-0.85)]. Participants under Low light condition had signifiacntly lower efficiency than participants under neutral light condition ($\hat{\psi}$=-10.89, p<0.04). We did not observe any significant influence of light on efficiency [F(2,12.56)=0.11, p=0.90, $\xi$ = 0.31 (CI: 0.06-0.68)] and planning time [F(2,10.57)=1.20, p=0.34, $\xi$ = 0.48 (CI: 0.16-1.04)] in the ToL task.
+
+In N-back task we observed a significant main effect of task difficulty where participants had significantly faster reaction time [F(1,11.76)=45.71, p<0.001, $\xi$ = 0.88 (CI: 0.78-0.98)]  and higher accuracy [F(1,6.72)=44.43, p<0.001, $\xi$ = 0.94 (CI: 0.75-0.99)] in the easy blocks (one back) compared to difficult blocks (two-blocks). However, we did not observe any significant effect of light condition on reaction time [F(2,9.26)=2.90, p=0.10, $\xi$ = 0.41 (CI: 0-0.79)], accuracy [F(2,6.11)=1.24, p=0.35, $\xi$ = 0.14 (CI: 0-0.68)],hit ratio [F(2,7.05)=2.82, p=0.13, $\xi$ = 0.13 (CI: 0-0.60)], false alarm [F(2,5.7)=1.28, p=0.35, $\xi$ = 0.24 (CI: 0-0.81)], sensitivity [F(2,2.91)=1.22, p=0.41, $\xi$ = 0.08 (CI: 0-0.61)], bias [F(2,2.67)=3.68, p=0.17, $\xi$ = 0.14 (CI: 0-0.68)].
+
+Further, we observed no significant interaction effect of light condition and task complexity on N back reaction time [F(2,9.25)=1.46, p=0.28, $\xi$ = 0.41 (CI: CI: 0-0.79)] and accuracy [F(2,6.11)=0.32, p=0.74, $\xi$ = 0.14 (CI: 0-0.68)], hit ratio [F(2,7.05)=2.24, p=0.18, $\xi$ = 0.03 (CI: 0-0.56)], false alarm [F(2,5.7)=1.28, p=0.59, $\xi$ = 0.24 (CI: 0-0.78)],sensitivity [F(2,2.91)=0.03, p=0.97, $\xi$ = 0.08 (CI: 0-0.55)], bias [F(2,2.67)=1.41, p=0.38, $\xi$ = 0.71 (CI: 0.18-0.91)].
+
+```{r digitspan-anova}
+
+digit_span<- data %>% 
+  dplyr::select ("Light_Settings", "LDSF", "LSDB", "LDSS")
+
+
+
+
+digit_span_summary <-digit_span %>% 
+  group_by(Light_Settings) %>% 
+  summarise(Mean_forward=mean(LDSF),
+            SEM_forward = sd(LDSF) / sqrt(n()),
+            Mean_backward=mean(LSDB),
+            SEM_backward = sd(LSDB) / sqrt(n()),
+            Mean_sequence=mean(LDSS),
+            SEM_sequence = sd(LDSS) / sqrt(n()))
+
+
+
+
+digit_span_long <- pivot_longer(digit_span,
+                                cols= 2:4,
+                                names_to = "block",
+                                values_to = "Value")
+
+digit_span_long$Light_Settings <- as.factor(digit_span_long$Light_Settings)
+digit_span_long$block <- as.factor(digit_span_long$block)
+
+
+digit_span_two_way <- WRS2::t2way(Value ~ Light_Settings*block, data = digit_span_long, tr=.1,nboot = 1000)
+
+
+forward_robust_model <- WRS2::t1way(LDSF ~ Light_Settings, data = digit_span, tr=.1,nboot = 1000)#Significant
+
+post_hoc_forward <- WRS2::lincon(LDSF ~ Light_Settings, data = digit_span, method="bonferroni", tr=0.1,nboot = 1000)
+
+backward_robust_model <- WRS2::t1way(LSDB ~ Light_Settings, data = digit_span, tr=.1,nboot = 1000)
+sequential_robust_model <- WRS2::t1way(LDSS ~ Light_Settings, data = digit_span, tr=.1,nboot = 1000)
+
+
+```
+
+```{r forward-ds-plot,include=FALSE}
+metadata_digit_span <- digit_span %>%
+  mutate(Condition = factor(Light_Settings,
+                               levels=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"
+                                        )))
+
+
+
+forward_plot <- metadata_digit_span %>%
+  ggplot(aes(x= Light_Settings, y = LDSF, fill = Light_Settings)) +
+  # geom_violin(trim=T)+ stat_summary(fun.data=mean_sdl, mult=1, 
+  #                geom="crossbar", width=0.1, color="red")+
+  stat_summary(fun.data = mean_se, geom = "errorbar", width =0.5)+
+  stat_summary(fun.data = mean_se, geom = "bar", show.legend = FALSE,width = .5)+
+  # geom_jitter(show.legend=FALSE, width=0.25, shape=21, color="black") +
+  labs(x=NULL,
+       y="Forward Digit Span")+
+  scale_x_discrete(breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+                   labels=c(Low, Neutral, High))+
+  scale_fill_manual(name=NULL,
+                    breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+                    labels=c(Low, Neutral, High),
+                    values=c(Low_color, Neutral_color, High_color)) +
+  apatheme +
+  theme(axis.text.x = element_markdown())+
+  scale_y_continuous(expand = expansion(mult = c(0, .1)))
+
+
+lines <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_lines = c(1,1,2),
+  xend_lines = c(1.95,3,3),
+  y_lines = c(10, 11, 10),
+  yend_lines = y_lines
+  
+)
+
+
+vlines_left <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_vlines_left = lines$x_lines,
+  xend_vlines_left = lines$x_lines,
+  y_vlines_left = lines$y_lines-0.3,
+  yend_vlines_left = lines$y_lines
+  
+)
+
+vlines_right <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_vlines_right  = lines$xend_lines,
+  xend_vlines_right = lines$xend_lines,
+  y_vlines_right = vlines_left$y_vlines_left,
+  yend_vlines_right = lines$y_lines
+  
+)
+
+stars <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  
+  x = c(1.5,2, 2.5),
+  
+  y = lines$y_lines+.5,
+  label =c("*",  "n.s", "n.s")
+)
+
+
+anova_forward_plot <-forward_plot +
+  geom_segment(data=lines, aes(x =x_lines, xend =xend_lines, y=y_lines, yend=yend_lines), inherit.aes = F)+
+  geom_segment(data=vlines_left, aes(x =x_vlines_left, xend =xend_vlines_left, y=y_vlines_left, yend=yend_vlines_left), inherit.aes = F)+
+  geom_segment(data=vlines_right, aes(x =x_vlines_right, xend =xend_vlines_right, y=y_vlines_right, yend=yend_vlines_right), inherit.aes = F)+
+geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 3) 
+
+# ggsave("Figures/Figure7.png", width=9, height=7)
+
+# ggsave("Figures/anova_pvt_miss.png", width=4.5, height=3.5)
+
+```
+
+```{r backward-ds-plot,include=FALSE}
+metadata_digit_span <- digit_span %>%
+  mutate(Condition = factor(Light_Settings,
+                               levels=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"
+                                        )))
+
+
+
+backward_plot <- metadata_digit_span %>%
+  ggplot(aes(x= Light_Settings, y = LSDB, fill = Light_Settings)) +
+  # geom_violin(trim=T)+ stat_summary(fun.data=mean_sdl, mult=1, 
+  #                geom="crossbar", width=0.1, color="red")+
+  stat_summary(fun.data = mean_se, geom = "errorbar", width =0.5)+
+  stat_summary(fun.data = mean_se, geom = "bar", show.legend = FALSE,width = .5)+
+  # geom_jitter(show.legend=FALSE, width=0.25, shape=21, color="black") +
+  labs(x=NULL,
+       y="Backward Digit Span")+
+  scale_x_discrete(breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+                   labels=c(Low, Neutral, High))+
+  scale_fill_manual(name=NULL,
+                    breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+                    labels=c(Low, Neutral, High),
+                    values=c(Low_color, Neutral_color, High_color)) +
+  apatheme +
+  theme(axis.text.x = element_markdown())+
+  scale_y_continuous(expand = expansion(mult = c(0, .1)))
+
+
+lines <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_lines = c(1,1,2),
+  xend_lines = c(1.95,3,3),
+  y_lines = c(10, 11, 10),
+  yend_lines = y_lines
+  
+)
+
+
+vlines_left <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_vlines_left = lines$x_lines,
+  xend_vlines_left = lines$x_lines,
+  y_vlines_left = lines$y_lines-0.3,
+  yend_vlines_left = lines$y_lines
+  
+)
+
+vlines_right <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_vlines_right  = lines$xend_lines,
+  xend_vlines_right = lines$xend_lines,
+  y_vlines_right = vlines_left$y_vlines_left,
+  yend_vlines_right = lines$y_lines
+  
+)
+
+stars <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  
+  x = c(1.5,2, 2.5),
+  
+  y = lines$y_lines+.5,
+  label =c("n.s",  "n.s", "n.s")
+)
+
+
+anova_backward_plot <-backward_plot +
+  geom_segment(data=lines, aes(x =x_lines, xend =xend_lines, y=y_lines, yend=yend_lines), inherit.aes = F)+
+  geom_segment(data=vlines_left, aes(x =x_vlines_left, xend =xend_vlines_left, y=y_vlines_left, yend=yend_vlines_left), inherit.aes = F)+
+  geom_segment(data=vlines_right, aes(x =x_vlines_right, xend =xend_vlines_right, y=y_vlines_right, yend=yend_vlines_right), inherit.aes = F)+
+geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 3) 
+
+# ggsave("Figures/Figure7.png", width=9, height=7)
+
+# ggsave("Figures/anova_pvt_miss.png", width=4.5, height=3.5)
+
+```
+
+```{r sequential-ds-plot,include=FALSE}
+metadata_digit_span <- digit_span %>%
+  mutate(Condition = factor(Light_Settings,
+                               levels=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"
+                                        )))
+
+
+
+sequential_plot <- metadata_digit_span %>%
+  ggplot(aes(x= Light_Settings, y = LDSS, fill = Light_Settings)) +
+  # geom_violin(trim=T)+ stat_summary(fun.data=mean_sdl, mult=1, 
+  #                geom="crossbar", width=0.1, color="red")+
+  stat_summary(fun.data = mean_se, geom = "errorbar", width =0.5)+
+  stat_summary(fun.data = mean_se, geom = "bar", show.legend = FALSE,width = .5)+
+  # geom_jitter(show.legend=FALSE, width=0.25, shape=21, color="black") +
+  labs(x=NULL,
+       y="Sequential Digit Span")+
+  scale_x_discrete(breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+                   labels=c(Low, Neutral, High))+
+  scale_fill_manual(name=NULL,
+                    breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+                    labels=c(Low, Neutral, High),
+                    values=c(Low_color, Neutral_color, High_color)) +
+  apatheme +
+  theme(axis.text.x = element_markdown())+
+  scale_y_continuous(expand = expansion(mult = c(0, .1)))
+
+
+lines <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_lines = c(1,1,2),
+  xend_lines = c(1.95,3,3),
+  y_lines = c(10, 11, 10),
+  yend_lines = y_lines
+  
+)
+
+
+vlines_left <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_vlines_left = lines$x_lines,
+  xend_vlines_left = lines$x_lines,
+  y_vlines_left = lines$y_lines-0.3,
+  yend_vlines_left = lines$y_lines
+  
+)
+
+vlines_right <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_vlines_right  = lines$xend_lines,
+  xend_vlines_right = lines$xend_lines,
+  y_vlines_right = vlines_left$y_vlines_left,
+  yend_vlines_right = lines$y_lines
+  
+)
+
+stars <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  
+  x = c(1.5,2, 2.5),
+  
+  y = lines$y_lines+.5,
+  label =c("n.s",  "n.s", "n.s")
+)
+
+
+anova_sequential_plot <-sequential_plot +
+  geom_segment(data=lines, aes(x =x_lines, xend =xend_lines, y=y_lines, yend=yend_lines), inherit.aes = F)+
+  geom_segment(data=vlines_left, aes(x =x_vlines_left, xend =xend_vlines_left, y=y_vlines_left, yend=yend_vlines_left), inherit.aes = F)+
+  geom_segment(data=vlines_right, aes(x =x_vlines_right, xend =xend_vlines_right, y=y_vlines_right, yend=yend_vlines_right), inherit.aes = F)+
+geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 3) 
+
+# ggsave("Figures/Figure7.png", width=9, height=7)
+
+# ggsave("Figures/anova_pvt_miss.png", width=4.5, height=3.5)
+
+```
+
+```{r tol-anova}
+
+tol_data<- data %>% 
+  dplyr::select ("Light_Settings", "TOL_efficacy":"TOL_Totaltime")
+
+
+tol_data_summary <-tol_data %>% 
+  group_by(Light_Settings) %>% 
+  summarise(Mean_execution=mean(TOL_Execution),
+            SEM_execution = sd(TOL_Execution) / sqrt(n()),
+            Mean_efficency=mean(TOL_efficacy),
+            SEM_efficency = sd(TOL_efficacy) / sqrt(n()),
+            Mean_planning=mean(ToL_Planning),
+            SEM_planning = sd(ToL_Planning) / sqrt(n()))
+
+
+efficiency_robust_model <- WRS2::t1way(TOL_efficacy ~ Light_Settings, data = tol_data, tr=.1,nboot = 1000)
+
+planning_robust_model <- WRS2::t1way(ToL_Planning ~ Light_Settings, data = tol_data, tr=.1)
+
+execution_robust_model <- WRS2::t1way(TOL_Execution ~ Light_Settings, data = tol_data, tr=.1,nboot = 1000)#Significant
+
+
+totaltime_robust_model <- WRS2::t1way(TOL_Totaltime ~ Light_Settings, data = tol_data, tr=.1,nboot = 1000)#trend
+
+post_hoc_execution <- WRS2::lincon(TOL_Execution ~ Light_Settings, data = tol_data, tr=.1,nboot = 1000)
+post_hoc_totaltime <- WRS2::lincon(TOL_Totaltime ~ Light_Settings, data = tol_data, tr=.1,nboot = 1000)
+
+tol_data$TOL_Execution2 <- tol_data$TOL_Execution*1000
+
+
+```
+
+```{r execution-plot,include=FALSE}
+metadata_tol <- tol_data %>%
+  mutate(Condition = factor(Light_Settings,
+                               levels=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"
+                                        )))
+
+
+
+execution_plot <- metadata_tol %>%
+  ggplot(aes(x= Light_Settings, y = TOL_Execution, fill = Light_Settings)) +
+  # geom_violin(trim=T)+ stat_summary(fun.data=mean_sdl, mult=1, 
+  #                geom="crossbar", width=0.1, color="red")+
+  stat_summary(fun.data = mean_se, geom = "errorbar", width =0.5)+
+  stat_summary(fun.data = mean_se, geom = "bar", show.legend = FALSE,width = .5)+
+  # geom_jitter(show.legend=FALSE, width=0.25, shape=21, color="black") +
+  labs(x=NULL,
+       y="Tower of London: Execution (s)")+
+  scale_x_discrete(breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+                   labels=c(Low, Neutral, High))+
+  scale_fill_manual(name=NULL,
+                    breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+                    labels=c(Low, Neutral, High),
+                    values=c(Low_color, Neutral_color, High_color)) +
+  apatheme +
+  theme(axis.text.x = element_markdown())+
+  scale_y_continuous(expand = expansion(mult = c(0, .1)))
+
+
+lines <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_lines = c(1,1,2),
+  xend_lines = c(1.95,3,3),
+  y_lines = c(37, 40, 37),
+  yend_lines = y_lines
+  
+)
+
+
+vlines_left <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_vlines_left = lines$x_lines,
+  xend_vlines_left = lines$x_lines,
+  y_vlines_left = lines$y_lines-1,
+  yend_vlines_left = lines$y_lines
+  
+)
+
+vlines_right <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_vlines_right  = lines$xend_lines,
+  xend_vlines_right = lines$xend_lines,
+  y_vlines_right = vlines_left$y_vlines_left,
+  yend_vlines_right = lines$y_lines
+  
+)
+
+stars <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  
+  x = c(1.5,2, 2.5),
+  
+  y = lines$y_lines+1.5,
+  label =c("*",  "n.s", "n.s")
+)
+
+
+anova_execution_plot <-execution_plot +
+  geom_segment(data=lines, aes(x =x_lines, xend =xend_lines, y=y_lines, yend=yend_lines), inherit.aes = F)+
+  geom_segment(data=vlines_left, aes(x =x_vlines_left, xend =xend_vlines_left, y=y_vlines_left, yend=yend_vlines_left), inherit.aes = F)+
+  geom_segment(data=vlines_right, aes(x =x_vlines_right, xend =xend_vlines_right, y=y_vlines_right, yend=yend_vlines_right), inherit.aes = F)+
+geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 3) 
+
+# ggsave("Figures/Figure7.png", width=9, height=7)
+
+# ggsave("Figures/anova_pvt_miss.png", width=4.5, height=3.5)
+
+```
+
+```{r efficency-plot,include=FALSE}
+metadata_tol <- tol_data %>%
+  mutate(Condition = factor(Light_Settings,
+                               levels=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"
+                                        )))
+
+
+
+efficiency_plot <- metadata_tol %>%
+  ggplot(aes(x= Light_Settings, y = TOL_efficacy, fill = Light_Settings)) +
+  # geom_violin(trim=T)+ stat_summary(fun.data=mean_sdl, mult=1, 
+  #                geom="crossbar", width=0.1, color="red")+
+  stat_summary(fun.data = mean_se, geom = "errorbar", width =0.5)+
+  stat_summary(fun.data = mean_se, geom = "bar", show.legend = FALSE,width = .5)+
+  # geom_jitter(show.legend=FALSE, width=0.25, shape=21, color="black") +
+  labs(x=NULL,
+       y="Tower of London: Efficacy")+
+  scale_x_discrete(breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+                   labels=c(Low, Neutral, High))+
+  scale_fill_manual(name=NULL,
+                    breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+                    labels=c(Low, Neutral, High),
+                    values=c(Low_color, Neutral_color, High_color)) +
+  apatheme +
+  theme(axis.text.x = element_markdown())+
+  scale_y_continuous(expand = expansion(mult = c(0, .1)))
+
+
+lines <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_lines = c(1,1,2),
+  xend_lines = c(1.95,3,3),
+  y_lines = c(3, 3.5, 3),
+  yend_lines = y_lines
+  
+)
+
+
+vlines_left <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_vlines_left = lines$x_lines,
+  xend_vlines_left = lines$x_lines,
+  y_vlines_left = lines$y_lines-0.08,
+  yend_vlines_left = lines$y_lines
+  
+)
+
+vlines_right <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_vlines_right  = lines$xend_lines,
+  xend_vlines_right = lines$xend_lines,
+  y_vlines_right = vlines_left$y_vlines_left,
+  yend_vlines_right = lines$y_lines
+  
+)
+
+stars <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  
+  x = c(1.5,2, 2.5),
+  
+  y = lines$y_lines+.3,
+  label =c("n.s",  "n.s", "n.s")
+)
+
+
+anova_efficency_plot <-efficiency_plot +
+  geom_segment(data=lines, aes(x =x_lines, xend =xend_lines, y=y_lines, yend=yend_lines), inherit.aes = F)+
+  geom_segment(data=vlines_left, aes(x =x_vlines_left, xend =xend_vlines_left, y=y_vlines_left, yend=yend_vlines_left), inherit.aes = F)+
+  geom_segment(data=vlines_right, aes(x =x_vlines_right, xend =xend_vlines_right, y=y_vlines_right, yend=yend_vlines_right), inherit.aes = F)+
+geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 3) 
+
+# ggsave("Figures/Figure7.png", width=9, height=7)
+
+# ggsave("Figures/anova_pvt_miss.png", width=4.5, height=3.5)
+
+```
+
+```{r Planning-plot,include=FALSE}
+metadata_tol <- tol_data %>%
+  mutate(Condition = factor(Light_Settings,
+                               levels=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"
+                                        )))
+
+
+
+planning_plot <- metadata_tol %>%
+  ggplot(aes(x= Light_Settings, y = ToL_Planning, fill = Light_Settings)) +
+  # geom_violin(trim=T)+ stat_summary(fun.data=mean_sdl, mult=1, 
+  #                geom="crossbar", width=0.1, color="red")+
+  stat_summary(fun.data = mean_se, geom = "errorbar", width =0.5)+
+  stat_summary(fun.data = mean_se, geom = "bar", show.legend = FALSE,width = .5)+
+  # geom_jitter(show.legend=FALSE, width=0.25, shape=21, color="black") +
+  labs(x=NULL,
+       y="Tower of London: Planning (s)")+
+  scale_x_discrete(breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+                   labels=c(Low, Neutral, High))+
+  scale_fill_manual(name=NULL,
+                    breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+                    labels=c(Low, Neutral, High),
+                    values=c(Low_color, Neutral_color, High_color)) +
+  apatheme +
+  theme(axis.text.x = element_markdown())+
+  scale_y_continuous(expand = expansion(mult = c(0, .1)))
+
+
+lines <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_lines = c(1,1,2),
+  xend_lines = c(1.95,3,3),
+  y_lines = c(20, 22, 20),
+  yend_lines = y_lines
+  
+)
+
+
+vlines_left <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_vlines_left = lines$x_lines,
+  xend_vlines_left = lines$x_lines,
+  y_vlines_left = lines$y_lines-0.5,
+  yend_vlines_left = lines$y_lines
+  
+)
+
+vlines_right <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_vlines_right  = lines$xend_lines,
+  xend_vlines_right = lines$xend_lines,
+  y_vlines_right = vlines_left$y_vlines_left,
+  yend_vlines_right = lines$y_lines
+  
+)
+
+stars <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  
+  x = c(1.5,2, 2.5),
+  
+  y = lines$y_lines+1,
+  label =c("n.s",  "n.s", "n.s")
+)
+
+
+anova_plannning_plot <-planning_plot +
+  geom_segment(data=lines, aes(x =x_lines, xend =xend_lines, y=y_lines, yend=yend_lines), inherit.aes = F)+
+  geom_segment(data=vlines_left, aes(x =x_vlines_left, xend =xend_vlines_left, y=y_vlines_left, yend=yend_vlines_left), inherit.aes = F)+
+  geom_segment(data=vlines_right, aes(x =x_vlines_right, xend =xend_vlines_right, y=y_vlines_right, yend=yend_vlines_right), inherit.aes = F)+
+geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 3) 
+
+# ggsave("Figures/Figure7.png", width=9, height=7)
+
+# ggsave("Figures/anova_pvt_miss.png", width=4.5, height=3.5)
+
+```
+
+```{r totoaltime-plot,include=FALSE}
+metadata_tol <- tol_data %>%
+  mutate(Condition = factor(Light_Settings,
+                               levels=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"
+                                        )))
+
+
+
+total_plot <- metadata_tol %>%
+  ggplot(aes(x= Light_Settings, y = TOL_Totaltime, fill = Light_Settings)) +
+  # geom_violin(trim=T)+ stat_summary(fun.data=mean_sdl, mult=1, 
+  #                geom="crossbar", width=0.1, color="red")+
+  stat_summary(fun.data = mean_se, geom = "errorbar", width =0.5)+
+  stat_summary(fun.data = mean_se, geom = "bar", show.legend = FALSE,width = .5)+
+  geom_jitter(show.legend=FALSE, width=0.25, shape=21, color="black") +
+  labs(x=NULL,
+       y="Tower of London: Total Time (s)")+
+  scale_x_discrete(breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+                   labels=c(Low, Neutral, High))+
+  scale_fill_manual(name=NULL,
+                    breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+                    labels=c(Low, Neutral, High),
+                    values=c(Low_color, Neutral_color, High_color)) +
+  apatheme +
+  theme(axis.text.x = element_markdown())+
+  scale_y_continuous(expand = expansion(mult = c(0, .1)))
+
+
+lines <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_lines = c(1,1,2),
+  xend_lines = c(1.95,3,3),
+  y_lines = c(55, 57, 55),
+  yend_lines = y_lines
+  
+)
+
+
+vlines_left <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_vlines_left = lines$x_lines,
+  xend_vlines_left = lines$x_lines,
+  y_vlines_left = lines$y_lines-0.05,
+  yend_vlines_left = lines$y_lines
+  
+)
+
+vlines_right <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_vlines_right  = lines$xend_lines,
+  xend_vlines_right = lines$xend_lines,
+  y_vlines_right = vlines_left$y_vlines_left,
+  yend_vlines_right = lines$y_lines
+  
+)
+
+stars <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  
+  x = c(1.5,2, 2.5),
+  
+  y = lines$y_lines+1.1,
+  label =c("n.s",  "n.s", "n.s")
+)
+
+
+anova_total_plot <-total_plot +
+  geom_segment(data=lines, aes(x =x_lines, xend =xend_lines, y=y_lines, yend=yend_lines), inherit.aes = F)+
+  geom_segment(data=vlines_left, aes(x =x_vlines_left, xend =xend_vlines_left, y=y_vlines_left, yend=yend_vlines_left), inherit.aes = F)+
+  geom_segment(data=vlines_right, aes(x =x_vlines_right, xend =xend_vlines_right, y=y_vlines_right, yend=yend_vlines_right), inherit.aes = F)+
+geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 5) 
+
+# ggsave("Figures/Figure7.png", width=9, height=7)
+
+# ggsave("Figures/anova_pvt_miss.png", width=4.5, height=3.5)
+
+```
+
+```{r nback-anova}
+#Subseting N-back data
+nback_data<- data %>% 
+  dplyr::select (Participant, Light_Settings, One_back_GA:Three_back_rt, One_back_HR, One_back_FalseAlarm, One_back_d, One_back_c,Three_back_HR, Three_back_FA, Three_back_d,Three_back_c)
+
+
+
+
+
+
+#One way anova: one-back 
+
+oneback_acc_robust_model <- WRS2::t1way(One_back_GA ~ Light_Settings, data = nback_data, tr=.1,nboot = 1000)
+
+oneback_rt_robust_model <- WRS2::t1way(One_back_rt ~ Light_Settings, data = nback_data, tr=.1,nboot = 1000)
+
+##One way anova: two-back
+
+twoback_acc_robust_model <- WRS2::t1way(Three_back_GA ~ Light_Settings, data = nback_data, tr=.1,nboot = 1000)
+
+twoback_rt_robust_model <- WRS2::t1way(Three_back_rt ~ Light_Settings, data = nback_data, tr=.1,nboot = 1000)
+
+# Preparing data for twoway anova
+
+nback_data_rt <- nback_data %>% 
+  dplyr::select(Participant, Light_Settings,One_back_rt,Three_back_rt  )
+
+nback_data_acc <- nback_data %>% 
+  dplyr::select(Participant, Light_Settings,One_back_GA,Three_back_GA  )
+
+nback_data_hr <- nback_data %>% 
+  dplyr::select(Participant, Light_Settings,One_back_HR,Three_back_HR  )
+
+
+nback_data_fa <- nback_data %>% 
+  dplyr::select(Participant, Light_Settings,One_back_FalseAlarm,Three_back_FA  )
+
+nback_data_d<- nback_data %>% 
+  dplyr::select(Participant, Light_Settings,One_back_d,Three_back_d )
+
+nback_data_c <- nback_data %>% 
+  dplyr::select(Participant, Light_Settings,One_back_c,Three_back_c  )
+
+
+## Long data frame  for twoway anova
+nback_data_rt_long <- pivot_longer(nback_data_rt,
+                                   cols = 3:4,
+                                   names_to = "block",
+                                   values_to= "Value")
+
+nback_data_acc_long <- pivot_longer(nback_data_acc,
+                                   cols = 3:4,
+                                   names_to = "block",
+                                   values_to= "Value")
+
+
+nback_data_hr_long <- pivot_longer(nback_data_hr,
+                                   cols = 3:4,
+                                   names_to = "block",
+                                   values_to= "Value")
+
+
+
+nback_data_fa_long <- pivot_longer(nback_data_fa,
+                                   cols = 3:4,
+                                   names_to = "block",
+                                   values_to= "Value")
+
+
+nback_data_d_long <- pivot_longer(nback_data_d,
+                                   cols = 3:4,
+                                   names_to = "block",
+                                   values_to= "Value")
+
+nback_data_c_long <- pivot_longer(nback_data_c,
+                                   cols = 3:4,
+                                   names_to = "block",
+                                   values_to= "Value")
+
+
+nback_data_rt_summary_interaction <-nback_data_rt_long %>% 
+  group_by(Light_Settings, block) %>% 
+  summarise(Mean=mean(Value*1000,na.rm=TRUE),
+            SEM = sd(Value*1000,na.rm=TRUE) / sqrt(n()) )
+
+nback_data_rt_summary_main_effect <-nback_data_rt_long %>% 
+  group_by(Light_Settings) %>% 
+  summarise(Mean=mean(Value*1000,na.rm=TRUE),
+            SEM = sd(Value*1000,na.rm=TRUE) / sqrt(n()) )
+
+nback_data_rt_summary_task <-nback_data_rt_long %>% 
+  group_by(block) %>% 
+  summarise(Mean=mean(Value*1000,na.rm=TRUE),
+            SEM = sd(Value*1000,na.rm=TRUE) / sqrt(n()) )
+
+
+nback_data_acc_summary_main_effect <-nback_data_acc_long %>% 
+  group_by(Light_Settings) %>% 
+  summarise(Mean=mean(Value*100,na.rm=TRUE),
+            SEM = sd(Value*100,na.rm=TRUE) / sqrt(n()) )
+
+nback_data_acc_summary_interaction <-nback_data_acc_long %>% 
+  group_by(Light_Settings, block) %>% 
+  summarise(Mean=mean(Value*100,na.rm=TRUE),
+            SEM = sd(Value*100,na.rm=TRUE) / sqrt(n()) )
+
+nback_data_acc_summary_task <-nback_data_acc_long %>% 
+  group_by(block) %>% 
+  summarise(Mean=mean(Value*100,na.rm=TRUE),
+            SEM = sd(Value*100,na.rm=TRUE) / sqrt(n()) )
+
+
+nback_data_hr_summary_main_effect <-nback_data_hr_long %>% 
+  group_by(Light_Settings) %>% 
+  summarise(Mean=mean(Value,na.rm=TRUE),
+            SEM = sd(Value,na.rm=TRUE) / sqrt(n()) )
+
+nback_data_hr_summary_interaction <-nback_data_hr_long %>% 
+  group_by(Light_Settings, block) %>% 
+  summarise(Mean=mean(Value,na.rm=TRUE),
+            SEM = sd(Value,na.rm=TRUE) / sqrt(n()) )
+
+nback_data_hr_summary_task <-nback_data_hr_long %>% 
+  group_by(block) %>% 
+  summarise(Mean=mean(Value,na.rm=TRUE),
+            SEM = sd(Value,na.rm=TRUE) / sqrt(n()) )
+
+
+nback_data_fa_summary_main_effect <-nback_data_fa_long %>% 
+  group_by(Light_Settings) %>% 
+  summarise(Mean=mean(Value,na.rm=TRUE),
+            SEM = sd(Value,na.rm=TRUE) / sqrt(n()) )
+
+
+
+nback_data_fa_summary_interaction <-nback_data_fa_long %>% 
+  group_by(Light_Settings, block) %>% 
+  summarise(Mean=mean(Value,na.rm=TRUE),
+            SEM = sd(Value,na.rm=TRUE) / sqrt(n()) )
+
+
+nback_data_fa_summary_task <-nback_data_fa_long %>% 
+  group_by(block) %>% 
+  summarise(Mean=mean(Value,na.rm=TRUE),
+            SEM = sd(Value,na.rm=TRUE) / sqrt(n()) )
+
+
+nback_data_d_summary_main_effect <-nback_data_d_long %>% 
+  group_by(Light_Settings) %>% 
+  summarise(Mean=mean(Value,na.rm=TRUE),
+            SEM = sd(Value,na.rm=TRUE) / sqrt(n()) )
+
+nback_data_d_summary_interaction <-nback_data_d_long %>% 
+  group_by(Light_Settings, block) %>% 
+  summarise(Mean=mean(Value,na.rm=TRUE),
+            SEM = sd(Value,na.rm=TRUE) / sqrt(n()) )
+
+nback_data_d_summary_task <-nback_data_d_long %>% 
+  group_by(block) %>% 
+  summarise(Mean=mean(Value,na.rm=TRUE),
+            SEM = sd(Value,na.rm=TRUE) / sqrt(n()) )
+
+
+
+nback_data_c_summary_main_effect <-nback_data_c_long %>% 
+  group_by(Light_Settings) %>% 
+  summarise(Mean=mean(Value,na.rm=TRUE),
+            SEM = sd(Value,na.rm=TRUE) / sqrt(n()) )
+
+nback_data_c_summary_interaction <-nback_data_c_long %>% 
+  group_by(Light_Settings, block) %>% 
+  summarise(Mean=mean(Value,na.rm=TRUE),
+            SEM = sd(Value,na.rm=TRUE) / sqrt(n()) )
+
+nback_data_c_summary_task <-nback_data_c_long %>% 
+  group_by(block) %>% 
+  summarise(Mean=mean(Value,na.rm=TRUE),
+            SEM = sd(Value,na.rm=TRUE) / sqrt(n()) )
+
+## Setting the factors
+nback_data_rt_long$Light_Settings <- as.factor(nback_data_rt_long$Light_Settings )
+nback_data_rt_long$block <- as.factor(nback_data_rt_long$block)
+
+nback_data_acc_long$Light_Settings <- as.factor(nback_data_acc_long$Light_Settings )
+nback_data_acc_long$block <- as.factor(nback_data_acc_long$block)
+
+nback_data_hr_long$Light_Settings <- as.factor(nback_data_hr_long$Light_Settings )
+nback_data_hr_long$block <- as.factor(nback_data_hr_long$block)
+
+
+
+nback_data_fa_long$Light_Settings <- as.factor(nback_data_fa_long$Light_Settings )
+nback_data_fa_long$block <- as.factor(nback_data_fa_long$block)
+
+
+nback_data_d_long$Light_Settings <- as.factor(nback_data_d_long$Light_Settings )
+nback_data_d_long$block <- as.factor(nback_data_d_long$block)
+
+nback_data_c_long$Light_Settings <- as.factor(nback_data_c_long$Light_Settings )
+nback_data_c_long$block <- as.factor(nback_data_c_long$block)
+
+
+nback_data_rt_long$Value2 <- nback_data_rt_long$Value*1000
+
+## Robust two-way anova models
+
+
+rt_robust_model <- WRS2::bwtrim(Value2 ~ Light_Settings*block, data = nback_data_rt_long, tr=.1,nboot = 1000, id=Participant)
+
+acc_robust_model <- WRS2::bwtrim(Value ~ Light_Settings*block, data = nback_data_acc_long,id=Participant, tr=.1,nboot = 1000)
+
+hr_robust_model <- WRS2::bwtrim(Value ~ Light_Settings*block, data = nback_data_hr_long,id=Participant, tr=.1,nboot = 1000)
+
+fa_robust_model <- WRS2::bwtrim(Value ~ Light_Settings*block, data = nback_data_fa_long,id=Participant, tr=.1,nboot = 1000)
+
+d_robust_model <- WRS2::bwtrim(Value ~ Light_Settings*block, data = nback_data_d_long,id=Participant, tr=.1,nboot = 1000)
+
+
+c_robust_model <- WRS2::bwtrim(Value ~ Light_Settings*block, data = nback_data_c_long,id=Participant, tr=.1,nboot = 1000)
+
+
+## Estimating the effect size
+
+nrt_effect_block <- WRS2::yuen.effect.ci(Value ~ block, data = nback_data_rt_long)
+nrt_effect_light <- WRS2::yuen.effect.ci(Value ~ Light_Settings, data = nback_data_rt_long)
+nrt_effect_interaction <- WRS2::yuen.effect.ci(Value ~ Light_Settings*block, data = nback_data_rt_long)
+
+nacc_effect_block <- WRS2::yuen.effect.ci(Value ~ block, data = nback_data_acc_long)
+nacc_effect_light <- WRS2::yuen.effect.ci(Value ~ Light_Settings, data = nback_data_acc_long)
+nacc_effect_interaction <- WRS2::yuen.effect.ci(Value ~ Light_Settings*block, data = nback_data_acc_long)
+
+hr_effect_block <- WRS2::yuen.effect.ci(Value ~ block, data = nback_data_hr_long)
+hr_effect_light <- WRS2::yuen.effect.ci(Value ~ Light_Settings, data = nback_data_hr_long)
+hr_effect_interaction <- WRS2::yuen.effect.ci(Value ~ Light_Settings*block, data = nback_data_hr_long)
+
+
+fa_effect_block <- WRS2::yuen.effect.ci(Value ~ block, data = nback_data_fa_long)
+fa_effect_light <- WRS2::yuen.effect.ci(Value ~ Light_Settings, data = nback_data_fa_long)
+fa_effect_interaction <- WRS2::yuen.effect.ci(Value ~ Light_Settings*block, data = nback_data_fa_long)
+
+d_effect_block <- WRS2::yuen.effect.ci(Value ~ block, data = nback_data_d_long)
+d_effect_light <- WRS2::yuen.effect.ci(Value ~ Light_Settings, data = nback_data_d_long)
+d_effect_interaction <- WRS2::yuen.effect.ci(Value ~ Light_Settings*block, data = nback_data_d_long)
+
+c_effect_block <- WRS2::yuen.effect.ci(Value ~ block, data = nback_data_c_long)
+c_effect_light <- WRS2::yuen.effect.ci(Value ~ Light_Settings, data = nback_data_c_long)
+c_effect_interaction <- WRS2::yuen.effect.ci(Value ~ Light_Settings*block, data = nback_data_c_long)
+```
+
+```{r Nbackrt,include=FALSE}
+metadata_rt <- nback_data_rt_long %>%
+  mutate(Condition = factor(Light_Settings,
+                               levels=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"
+                                        )))
+
+
+
+n_back_rt_plot <- metadata_rt %>%
+  ggplot(aes(x= Light_Settings, y = Value2, fill = Light_Settings)) +
+  # geom_violin(trim=T)+ stat_summary(fun.data=mean_sdl, mult=1, 
+  #                geom="crossbar", width=0.1, color="red")+
+  stat_summary(fun.data = mean_se, geom = "errorbar", width =0.5)+
+  stat_summary(fun.data = mean_se, geom = "bar", show.legend = FALSE,width = .5)+
+  # geom_jitter(show.legend=FALSE, width=0.25, shape=21, color="black") +
+  labs(x=NULL,
+       y="N Back: Reaction Time (ms)")+
+  scale_x_discrete(breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+                   labels=c(Low, Neutral, High))+
+  scale_fill_manual(name=NULL,
+                    breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+                    labels=c(Low, Neutral, High),
+                    values=c(Low_color, Neutral_color, High_color)) +
+  apatheme +
+  theme(axis.text.x = element_markdown())+
+  scale_y_continuous(expand = expansion(mult = c(0, .1)))
+
+
+lines <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_lines = c(1,1,2),
+  xend_lines = c(1.95,3,3),
+  y_lines = c(1200, 1300, 1200),
+  yend_lines = y_lines
+  
+)
+
+
+vlines_left <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_vlines_left = lines$x_lines,
+  xend_vlines_left = lines$x_lines,
+  y_vlines_left = lines$y_lines-25,
+  yend_vlines_left = lines$y_lines
+  
+)
+
+vlines_right <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_vlines_right  = lines$xend_lines,
+  xend_vlines_right = lines$xend_lines,
+  y_vlines_right = vlines_left$y_vlines_left,
+  yend_vlines_right = lines$y_lines
+  
+)
+
+stars <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  
+  x = c(1.5,2, 2.5),
+  
+  y = lines$y_lines+50,
+  label =c("n.s",  "n.s", "n.s")
+)
+
+
+anova_n_back_rt_plot <-n_back_rt_plot +
+  geom_segment(data=lines, aes(x =x_lines, xend =xend_lines, y=y_lines, yend=yend_lines), inherit.aes = F)+
+  geom_segment(data=vlines_left, aes(x =x_vlines_left, xend =xend_vlines_left, y=y_vlines_left, yend=yend_vlines_left), inherit.aes = F)+
+  geom_segment(data=vlines_right, aes(x =x_vlines_right, xend =xend_vlines_right, y=y_vlines_right, yend=yend_vlines_right), inherit.aes = F)+
+geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 3) 
+
+# ggsave("Figures/Figure7.png", width=9, height=7)
+
+# ggsave("Figures/anova_pvt_miss.png", width=4.5, height=3.5)
+
+```
+
+```{r Nbackacc,include=FALSE}
+metadata_acc <- nback_data_acc_long %>%
+  mutate(Condition = factor(Light_Settings,
+                               levels=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"
+                                        )))
+
+metadata_acc$Value2 <- metadata_acc$Value*100
+
+n_back_acc_plot <- metadata_acc %>%
+  ggplot(aes(x= Light_Settings, y = Value2, fill = Light_Settings)) +
+  # geom_violin(trim=T)+ stat_summary(fun.data=mean_sdl, mult=1, 
+  #                geom="crossbar", width=0.1, color="red")+
+  stat_summary(fun.data = mean_se, geom = "errorbar", width =0.5)+
+  stat_summary(fun.data = mean_se, geom = "bar", show.legend = FALSE,width = .5)+
+  # geom_jitter(show.legend=FALSE, width=0.25, shape=21, color="black") +
+  labs(x=NULL,
+       y="N Back: Accuracy (%)")+
+  scale_x_discrete(breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+                   labels=c(Low, Neutral, High))+
+  scale_fill_manual(name=NULL,
+                    breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+                    labels=c(Low, Neutral, High),
+                    values=c(Low_color, Neutral_color, High_color)) +
+  apatheme +
+  theme(axis.text.x = element_markdown())+
+  scale_y_continuous(expand = expansion(mult = c(0, .1)), breaks = c(0,25,50,75,100))
+
+
+
+lines <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_lines = c(1,1,2),
+  xend_lines = c(1.95,3,3),
+  y_lines = c(103, 115, 103),
+  yend_lines = y_lines
+  
+)
+
+
+vlines_left <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_vlines_left = lines$x_lines,
+  xend_vlines_left = lines$x_lines,
+  y_vlines_left = lines$y_lines-2,
+  yend_vlines_left = lines$y_lines
+  
+)
+
+vlines_right <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_vlines_right  = lines$xend_lines,
+  xend_vlines_right = lines$xend_lines,
+  y_vlines_right = vlines_left$y_vlines_left,
+  yend_vlines_right = lines$y_lines
+  
+)
+
+stars <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  
+  x = c(1.5,2, 2.5),
+  
+  y = lines$y_lines+5,
+  label =c("n.s",  "n.s", "n.s")
+)
+
+
+anova_n_back_acc_plot <-n_back_acc_plot +
+  geom_segment(data=lines, aes(x =x_lines, xend =xend_lines, y=y_lines, yend=yend_lines), inherit.aes = F)+
+  geom_segment(data=vlines_left, aes(x =x_vlines_left, xend =xend_vlines_left, y=y_vlines_left, yend=yend_vlines_left), inherit.aes = F)+
+  geom_segment(data=vlines_right, aes(x =x_vlines_right, xend =xend_vlines_right, y=y_vlines_right, yend=yend_vlines_right), inherit.aes = F)+
+geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 3) 
+
+# ggsave("Figures/Figure7.png", width=9, height=7)
+
+# ggsave("Figures/anova_pvt_miss.png", width=4.5, height=3.5)
+
+```
+
+```{r Nbackhr,include=FALSE}
+metadata_hr <- nback_data_hr_long %>%
+  mutate(Condition = factor(Light_Settings,
+                               levels=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"
+                                        )))
+
+
+
+n_back_hr_plot <- metadata_hr %>%
+  ggplot(aes(x= Light_Settings, y = Value, fill = Light_Settings)) +
+  # geom_violin(trim=T)+ stat_summary(fun.data=mean_sdl, mult=1, 
+  #                geom="crossbar", width=0.1, color="red")+
+  stat_summary(fun.data = mean_se, geom = "errorbar", width =0.5)+
+  stat_summary(fun.data = mean_se, geom = "bar", show.legend = FALSE,width = .5)+
+  # geom_jitter(show.legend=FALSE, width=0.25, shape=21, color="black") +
+  labs(x=NULL,
+       y="N Back: Hit Ratio")+
+  scale_x_discrete(breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+                   labels=c(Low, Neutral, High))+
+  scale_fill_manual(name=NULL,
+                    breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+                    labels=c(Low, Neutral, High),
+                    values=c(Low_color, Neutral_color, High_color)) +
+  apatheme +
+  theme(axis.text.x = element_markdown())+
+  scale_y_continuous(expand = expansion(mult = c(0, .1)), breaks = c(0,0.25,.50,0.75,1))
+
+
+lines <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_lines = c(1,1,2),
+  xend_lines = c(1.95,3,3),
+  y_lines = c(1, 1.1, 1),
+  yend_lines = y_lines
+  
+)
+
+
+vlines_left <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_vlines_left = lines$x_lines,
+  xend_vlines_left = lines$x_lines,
+  y_vlines_left = lines$y_lines-.02,
+  yend_vlines_left = lines$y_lines
+  
+)
+
+vlines_right <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_vlines_right  = lines$xend_lines,
+  xend_vlines_right = lines$xend_lines,
+  y_vlines_right = vlines_left$y_vlines_left,
+  yend_vlines_right = lines$y_lines
+  
+)
+
+stars <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  
+  x = c(1.5,2, 2.5),
+  
+  y = lines$y_lines+.05,
+  label =c("n.s",  "n.s", "n.s")
+)
+
+
+anova_n_back_hr_plot <-n_back_hr_plot +
+  geom_segment(data=lines, aes(x =x_lines, xend =xend_lines, y=y_lines, yend=yend_lines), inherit.aes = F)+
+  geom_segment(data=vlines_left, aes(x =x_vlines_left, xend =xend_vlines_left, y=y_vlines_left, yend=yend_vlines_left), inherit.aes = F)+
+  geom_segment(data=vlines_right, aes(x =x_vlines_right, xend =xend_vlines_right, y=y_vlines_right, yend=yend_vlines_right), inherit.aes = F)+
+geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 3) 
+
+# ggsave("Figures/Figure7.png", width=9, height=7)
+
+# ggsave("Figures/anova_pvt_miss.png", width=4.5, height=3.5)
+
+```
+
+```{r Nbackfa,include=FALSE}
+metadata_fa <- nback_data_fa_long %>%
+  mutate(Condition = factor(Light_Settings,
+                               levels=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"
+                                        )))
+
+
+
+n_back_fa_plot <- metadata_fa %>%
+  ggplot(aes(x= Light_Settings, y = Value, fill = Light_Settings)) +
+  # geom_violin(trim=T)+ stat_summary(fun.data=mean_sdl, mult=1, 
+  #                geom="crossbar", width=0.1, color="red")+
+  stat_summary(fun.data = mean_se, geom = "errorbar", width =0.5)+
+  stat_summary(fun.data = mean_se, geom = "bar", show.legend = FALSE,width = .5)+
+  # geom_jitter(show.legend=FALSE, width=0.25, shape=21, color="black") +
+  labs(x=NULL,
+       y="N Back: False Alarm")+
+  scale_x_discrete(breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+                   labels=c(Low, Neutral, High))+
+  scale_fill_manual(name=NULL,
+                    breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+                    labels=c(Low, Neutral, High),
+                    values=c(Low_color, Neutral_color, High_color)) +
+  apatheme +
+  theme(axis.text.x = element_markdown())+
+  scale_y_continuous(expand = expansion(mult = c(0, .1)), breaks= c(0,.25,.50,.75,1))
+
+
+lines <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_lines = c(1,1,2),
+  xend_lines = c(1.95,3,3),
+  y_lines = c(1, 1.1, 1),
+  yend_lines = y_lines
+  
+)
+
+
+vlines_left <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_vlines_left = lines$x_lines,
+  xend_vlines_left = lines$x_lines,
+  y_vlines_left = lines$y_lines-.01,
+  yend_vlines_left = lines$y_lines
+  
+)
+
+vlines_right <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_vlines_right  = lines$xend_lines,
+  xend_vlines_right = lines$xend_lines,
+  y_vlines_right = vlines_left$y_vlines_left,
+  yend_vlines_right = lines$y_lines
+  
+)
+
+stars <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  
+  x = c(1.5,2, 2.5),
+  
+  y = lines$y_lines+.05,
+  label =c("n.s",  "n.s", "n.s")
+)
+
+
+anova_n_back_fa_plot <-n_back_fa_plot +
+  geom_segment(data=lines, aes(x =x_lines, xend =xend_lines, y=y_lines, yend=yend_lines), inherit.aes = F)+
+  geom_segment(data=vlines_left, aes(x =x_vlines_left, xend =xend_vlines_left, y=y_vlines_left, yend=yend_vlines_left), inherit.aes = F)+
+  geom_segment(data=vlines_right, aes(x =x_vlines_right, xend =xend_vlines_right, y=y_vlines_right, yend=yend_vlines_right), inherit.aes = F)+
+geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 3) 
+
+# ggsave("Figures/Figure7.png", width=9, height=7)
+
+# ggsave("Figures/anova_pvt_miss.png", width=4.5, height=3.5)
+
+```
+
+```{r Nbackd,include=FALSE}
+metadata_d <- nback_data_d_long %>%
+  mutate(Condition = factor(Light_Settings,
+                               levels=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"
+                                        )))
+
+
+
+n_back_d_plot <- metadata_d %>%
+  ggplot(aes(x= Light_Settings, y = Value, fill = Light_Settings)) +
+  # geom_violin(trim=T)+ stat_summary(fun.data=mean_sdl, mult=1, 
+  #                geom="crossbar", width=0.1, color="red")+
+  stat_summary(fun.data = mean_se, geom = "errorbar", width =0.5)+
+  stat_summary(fun.data = mean_se, geom = "bar", show.legend = FALSE,width = .5)+
+  # geom_jitter(show.legend=FALSE, width=0.25, shape=21, color="black") +
+  labs(x=NULL,
+       y="N Back: Sensitivity")+
+  scale_x_discrete(breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+                   labels=c(Low, Neutral, High))+
+  scale_fill_manual(name=NULL,
+                    breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+                    labels=c(Low, Neutral, High),
+                    values=c(Low_color, Neutral_color, High_color)) +
+  apatheme +
+  theme(axis.text.x = element_markdown())+
+  scale_y_continuous(expand = expansion(mult = c(0, .1)))
+
+
+lines <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_lines = c(1,1,2),
+  xend_lines = c(1.95,3,3),
+  y_lines = c(3, 3.5, 3),
+  yend_lines = y_lines
+  
+)
+
+
+vlines_left <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_vlines_left = lines$x_lines,
+  xend_vlines_left = lines$x_lines,
+  y_vlines_left = lines$y_lines-.1,
+  yend_vlines_left = lines$y_lines
+  
+)
+
+vlines_right <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_vlines_right  = lines$xend_lines,
+  xend_vlines_right = lines$xend_lines,
+  y_vlines_right = vlines_left$y_vlines_left,
+  yend_vlines_right = lines$y_lines
+  
+)
+
+stars <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  
+  x = c(1.5,2, 2.5),
+  
+  y = lines$y_lines+.3,
+  label =c("n.s",  "n.s", "n.s")
+)
+
+
+anova_n_back_d_plot <-n_back_d_plot +
+  geom_segment(data=lines, aes(x =x_lines, xend =xend_lines, y=y_lines, yend=yend_lines), inherit.aes = F)+
+  geom_segment(data=vlines_left, aes(x =x_vlines_left, xend =xend_vlines_left, y=y_vlines_left, yend=yend_vlines_left), inherit.aes = F)+
+  geom_segment(data=vlines_right, aes(x =x_vlines_right, xend =xend_vlines_right, y=y_vlines_right, yend=yend_vlines_right), inherit.aes = F)+
+geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 3) 
+
+# ggsave("Figures/Figure7.png", width=9, height=7)
+
+# ggsave("Figures/anova_pvt_miss.png", width=4.5, height=3.5)
+
+```
+
+```{r Nbackhc,include=FALSE}
+metadata_c <- nback_data_c_long %>%
+  mutate(Condition = factor(Light_Settings,
+                               levels=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"
+                                        )))
+
+
+
+n_back_c_plot <- metadata_c %>%
+  ggplot(aes(x= Light_Settings, y = Value, fill = Light_Settings)) +
+  # geom_violin(trim=T)+ stat_summary(fun.data=mean_sdl, mult=1, 
+  #                geom="crossbar", width=0.1, color="red")+
+  stat_summary(fun.data = mean_se, geom = "errorbar", width =0.5)+
+  stat_summary(fun.data = mean_se, geom = "bar", show.legend = FALSE,width = .5)+
+  # geom_jitter(show.legend=FALSE, width=0.25, shape=21, color="black") +
+  labs(x=NULL,
+       y="N Back: Bias")+
+  scale_x_discrete(breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+                   labels=c(Low, Neutral, High))+
+  scale_fill_manual(name=NULL,
+                    breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+                    labels=c(Low, Neutral, High),
+                    values=c(Low_color, Neutral_color, High_color)) +
+  apatheme +
+  theme(axis.text.x = element_markdown())+
+  scale_y_continuous(expand = expansion(mult = c(0, .1)), breaks = c(0,.25,.50,.75,1))
+
+
+lines <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_lines = c(1,1,2),
+  xend_lines = c(1.95,3,3),
+  y_lines = c(1, 1.1, 1),
+  yend_lines = y_lines
+  
+)
+
+
+vlines_left <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_vlines_left = lines$x_lines,
+  xend_vlines_left = lines$x_lines,
+  y_vlines_left = lines$y_lines-.02,
+  yend_vlines_left = lines$y_lines
+  
+)
+
+vlines_right <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  x_vlines_right  = lines$xend_lines,
+  xend_vlines_right = lines$xend_lines,
+  y_vlines_right = vlines_left$y_vlines_left,
+  yend_vlines_right = lines$y_lines
+  
+)
+
+stars <- tibble(
+  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
+             levels = c(Low, Neutral, High)),
+  
+  x = c(1.5,2, 2.5),
+  
+  y = lines$y_lines+.05,
+  label =c("n.s",  "n.s", "n.s")
+)
+
+
+anova_n_back_c_plot <-n_back_c_plot +
+  geom_segment(data=lines, aes(x =x_lines, xend =xend_lines, y=y_lines, yend=yend_lines), inherit.aes = F)+
+  geom_segment(data=vlines_left, aes(x =x_vlines_left, xend =xend_vlines_left, y=y_vlines_left, yend=yend_vlines_left), inherit.aes = F)+
+  geom_segment(data=vlines_right, aes(x =x_vlines_right, xend =xend_vlines_right, y=y_vlines_right, yend=yend_vlines_right), inherit.aes = F)+
+geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 3) 
+
+# ggsave("Figures/Figure7.png", width=9, height=7)
+
+# ggsave("Figures/anova_pvt_miss.png", width=4.5, height=3.5)
+
+```
+
+
+```{r executive-function, include =F}
+
+ef_plot <- cowplot::plot_grid(anova_forward_plot,anova_backward_plot, anova_sequential_plot,
+                              anova_execution_plot,anova_efficency_plot,anova_plannning_plot,
+                              anova_n_back_rt_plot, anova_n_back_acc_plot,anova_n_back_hr_plot,anova_n_back_fa_plot,anova_n_back_d_plot,anova_n_back_c_plot,
+                            
+                   labels = "AUTO",
+                   ncol=3,nrow=4,
+                   label_size = 7,
+                  align = "v",
+                  label_fontfamily = "Arial",
+                  label_fontface = "plain")
+ggsave("Figures/executive_functions.png",ef_plot, width=7, height=9)
+
+
+
+
+```
+
+(ref:ef)  light conditions' effect on : (A) forward digit span, (B) backward digit span, (C) sequential digit span (D) Tol: execution time (E) Tol: efficacy (F) Tol: planning time (G) reaction time in N-back (H) accuracy in N back. Each bar represents the mean ± standard error of measurements. 
+
+```{r fig2, fig.align= 'center', fig.cap='(ref:ef)',  warning=FALSE,  out.height='100%', out.width='100%'}
+
+knitr::include_graphics('Figures/executive_functions.png', dpi =300)
+
+```
+
+
+
+# Discussion
+
+\newpage
+
+# References
+
+```{=tex}
+\begingroup
+\setlength{\parindent}{-0.5in}
+\setlength{\leftskip}{0.5in}
+```
+::: {#refs custom-style="Bibliography"}
+:::
+
+```{=tex}
+\endgroup
+```

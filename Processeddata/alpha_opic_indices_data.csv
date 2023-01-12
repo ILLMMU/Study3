@@ -1,0 +1,7 @@
+﻿Group,Light Condition,Photopic lx,Irradiance (μW/cm2),S cone,Melanopsin,Rod ,M Cone ,L Cone,MDER,CCT
+Horizontal_80cm_Eh,High_Horizontal,247.17,81.16,242.09,210.93,221.15,239.49,243.22,0.85,6381
+Horizontal_80cm_Eh,Neutral_Horizontal,259.82,79.23,137.75,156.09,174.23,226.87,259.43,0.6,3875
+Horizontal_80cm_Eh,Low_Horizontal,207.38,63.48,50.85,90.57,108.88,161.96,211.8,0.43,2648
+Vertical_120cm_Ev,High_vertical,131.83,43.37,125.21,110.72,116.4,127,129.83,0.84,6164
+Vertical_120cm_Ev,Neutral_vertical,139.53,42.73,71.68,82.62,92.47,121.15,139.49,0.6,3788
+Vertical_120cm_Ev,Low_vertical,113.98,35.22,27.23,49.2,59.26,88.52,139.49,0.43,2606

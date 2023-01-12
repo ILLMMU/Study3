@@ -1,0 +1,263 @@
+20.2019 	EXP 	Created window1 = Window(allowGUI=False, allowStencil=False, args=UNKNOWN, autoLog=True, bitsMode=UNKNOWN, blendMode='avg', color=array([1., 1., 1.]), colorSpace='rgb', fullscr=<method-wrapper '__getattribute__' of attributeSetter object at 0x000000001CA34DA0>, gamma=None, gammaErrorPolicy='raise', kwargs=UNKNOWN, lms=UNKNOWN, monitor=<psychopy.monitors.calibTools.Monitor object at 0x000000001CD7E080>, multiSample=False, name='window1', numSamples=2, pos=[0.0, 0.0], screen=0, size=array([1366,  768]), stereo=False, units='norm', useFBO=True, useRetina=False, viewOri=0.0, viewPos=None, viewScale=None, waitBlanking=True, winType='pyglet')
+20.2019 	EXP 	window1: recordFrameIntervals = False
+20.3681 	EXP 	window1: recordFrameIntervals = True
+20.5521 	EXP 	window1: recordFrameIntervals = False
+20.6270 	EXP 	Created Background_1 = EnvelopeGrating(__class__=type(...), autoDraw=False, autoLog=True, blendmode='avg', color=array([-1., -1., -1.]), colorSpace='rgb', contrast=0.5, depth=0.0, interpolate=True, mask='none', maskParams=None, name='Background_1', opacity=1.0, ori=0.0, phase=array([0., 0.]), pos=array([0., 0.]), rgbPedestal=array([0., 0., 0.]), sf=array([1., 1.]), size=array([20., 20.]), tex='sin', texRes=128, units='norm', win=Window(...))
+20.6466 	WARNING 	Envelope grating in use with no gamma set. Unless you have hardware gamma correction the image will be distorted.
+20.7710 	EXP 	Created text_2 = TextStim(__class__=<class 'psychopy.visual.text.TextStim'>, alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color=array([1., 1., 1.]), colorSpace='rgb', contrast=1.0, depth=-1.0, flipHoriz=False, flipVert=False, font='Arial', fontFiles=[], height=0.12, italic=False, languageStyle='LTR', name='text_2', opacity=1.0, ori=0, pos=array([0., 0.]), rgb=array([1., 1., 1.]), text=str(...), units='norm', win=Window(...), wrapWidth=1)
+20.7758 	EXP 	Created Background_2 = EnvelopeGrating(__class__=type(...), autoDraw=False, autoLog=True, blendmode='avg', color=array([-1., -1., -1.]), colorSpace='rgb', contrast=0.5, depth=0.0, interpolate=True, mask='none', maskParams=None, name='Background_2', opacity=1.0, ori=0.0, phase=array([0., 0.]), pos=array([0., 0.]), rgbPedestal=array([0., 0., 0.]), sf=array([1., 1.]), size=array([20., 20.]), tex='sin', texRes=128, units='norm', win=Window(...))
+20.7928 	WARNING 	Envelope grating in use with no gamma set. Unless you have hardware gamma correction the image will be distorted.
+20.8061 	EXP 	Created text = TextStim(__class__=<class 'psychopy.visual.text.TextStim'>, alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color=array([1., 1., 1.]), colorSpace='rgb', contrast=1.0, depth=-1.0, flipHoriz=False, flipVert=False, font='Arial', fontFiles=[], height=0.1, italic=False, languageStyle='LTR', name='text', opacity=1.0, ori=0, pos=array([0., 0.]), rgb=array([1., 1., 1.]), text='default text', units='norm', win=Window(...), wrapWidth=1.5)
+20.8107 	EXP 	Created Background_3 = EnvelopeGrating(__class__=type(...), autoDraw=False, autoLog=True, blendmode='avg', color=array([-1., -1., -1.]), colorSpace='rgb', contrast=0.5, depth=0.0, interpolate=True, mask='none', maskParams=None, name='Background_3', opacity=1.0, ori=0.0, phase=array([0., 0.]), pos=array([0., 0.]), rgbPedestal=array([0., 0., 0.]), sf=array([1., 1.]), size=array([20., 20.]), tex='sin', texRes=128, units='norm', win=Window(...))
+20.8283 	WARNING 	Envelope grating in use with no gamma set. Unless you have hardware gamma correction the image will be distorted.
+20.8336 	EXP 	Created Fixation = TextStim(__class__=<class 'psychopy.visual.text.TextStim'>, alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color=array([1., 1., 1.]), colorSpace='rgb', contrast=1.0, depth=-1.0, flipHoriz=False, flipVert=False, font='Arial', fontFiles=[], height=0.12, italic=False, languageStyle='LTR', name='Fixation', opacity=1.0, ori=0, pos=array([0., 0.]), rgb=array([1., 1., 1.]), text='+', units='norm', win=Window(...), wrapWidth=1)
+20.8425 	EXP 	Sound Stimulus set volume 1.000
+20.8468 	EXP 	Created Background_4 = EnvelopeGrating(__class__=type(...), autoDraw=False, autoLog=True, blendmode='avg', color=array([-1., -1., -1.]), colorSpace='rgb', contrast=0.5, depth=0.0, interpolate=True, mask='none', maskParams=None, name='Background_4', opacity=1.0, ori=0.0, phase=array([0., 0.]), pos=array([0., 0.]), rgbPedestal=array([0., 0., 0.]), sf=array([1., 1.]), size=array([20., 20.]), tex='sin', texRes=128, units='norm', win=Window(...))
+20.8624 	WARNING 	Envelope grating in use with no gamma set. Unless you have hardware gamma correction the image will be distorted.
+20.8695 	EXP 	Created text_3 = TextStim(__class__=<class 'psychopy.visual.text.TextStim'>, alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color=array([1., 1., 1.]), colorSpace='rgb', contrast=1.0, depth=-1.0, flipHoriz=False, flipVert=False, font='Arial', fontFiles=[], height=0.12, italic=False, languageStyle='LTR', name='text_3', opacity=1.0, ori=0, pos=array([0., 0.]), rgb=array([1., 1., 1.]), text='default text', units='norm', win=Window(...), wrapWidth=1)
+20.8738 	EXP 	Created Background_5 = EnvelopeGrating(__class__=type(...), autoDraw=False, autoLog=True, blendmode='avg', color=array([-1., -1., -1.]), colorSpace='rgb', contrast=0.5, depth=0.0, interpolate=True, mask='none', maskParams=None, name='Background_5', opacity=1.0, ori=0.0, phase=array([0., 0.]), pos=array([0., 0.]), rgbPedestal=array([0., 0., 0.]), sf=array([1., 1.]), size=array([20., 20.]), tex='sin', texRes=128, units='norm', win=Window(...))
+20.8897 	WARNING 	Envelope grating in use with no gamma set. Unless you have hardware gamma correction the image will be distorted.
+20.9008 	EXP 	Created BreakMsg = TextStim(__class__=<class 'psychopy.visual.text.TextStim'>, alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color=array([1., 1., 1.]), colorSpace='rgb', contrast=1.0, depth=-1.0, flipHoriz=False, flipVert=False, font='Arial', fontFiles=[], height=0.12, italic=False, languageStyle='LTR', name='BreakMsg', opacity=1.0, ori=0, pos=array([0., 0.]), rgb=array([1., 1., 1.]), text='Take a break!', units='norm', win=Window(...), wrapWidth=1)
+20.9050 	EXP 	Created Background_6 = EnvelopeGrating(__class__=type(...), autoDraw=False, autoLog=True, blendmode='avg', color=array([-1., -1., -1.]), colorSpace='rgb', contrast=0.5, depth=0.0, interpolate=True, mask='none', maskParams=None, name='Background_6', opacity=1.0, ori=0.0, phase=array([0., 0.]), pos=array([0., 0.]), rgbPedestal=array([0., 0., 0.]), sf=array([1., 1.]), size=array([20., 20.]), tex='sin', texRes=128, units='norm', win=Window(...))
+20.9214 	WARNING 	Envelope grating in use with no gamma set. Unless you have hardware gamma correction the image will be distorted.
+20.9403 	EXP 	Created text_4 = TextStim(__class__=<class 'psychopy.visual.text.TextStim'>, alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color=array([1., 1., 1.]), colorSpace='rgb', contrast=1.0, depth=-1.0, flipHoriz=False, flipVert=False, font='Arial', fontFiles=[], height=0.12, italic=False, languageStyle='LTR', name='text_4', opacity=1.0, ori=0, pos=array([0., 0.]), rgb=array([1., 1., 1.]), text=str(...), units='norm', win=Window(...), wrapWidth=1)
+20.9855 	EXP 	Background_1: interpolate = True
+20.9855 	EXP 	Background_1: texRes = 128
+20.9855 	EXP 	Background_1: mask = None
+20.9855 	EXP 	Background_1: envelope = 'sin'
+20.9855 	EXP 	Background_1: carrier = None
+20.9855 	EXP 	Background_1: envsf = array([1., 1.])
+20.9855 	EXP 	Background_1: envphase = array([0., 0.])
+20.9855 	EXP 	Background_1: envori = 0.0
+20.9855 	EXP 	Background_1: moddepth = 1.0
+20.9855 	EXP 	Background_1: power = 1.0
+20.9855 	EXP 	Background_1: beat = False
+20.9855 	EXP 	Background_1: blendmode = 'avg'
+20.9855 	EXP 	Background_2: interpolate = True
+20.9855 	EXP 	Background_2: texRes = 128
+20.9855 	EXP 	Background_2: mask = None
+20.9855 	EXP 	Background_2: envelope = 'sin'
+20.9855 	EXP 	Background_2: carrier = None
+20.9855 	EXP 	Background_2: envsf = array([1., 1.])
+20.9855 	EXP 	Background_2: envphase = array([0., 0.])
+20.9855 	EXP 	Background_2: envori = 0.0
+20.9855 	EXP 	Background_2: moddepth = 1.0
+20.9855 	EXP 	Background_2: power = 1.0
+20.9855 	EXP 	Background_2: beat = False
+20.9855 	EXP 	Background_2: blendmode = 'avg'
+20.9855 	EXP 	Background_3: interpolate = True
+20.9855 	EXP 	Background_3: texRes = 128
+20.9855 	EXP 	Background_3: mask = None
+20.9855 	EXP 	Background_3: envelope = 'sin'
+20.9855 	EXP 	Background_3: carrier = None
+20.9855 	EXP 	Background_3: envsf = array([1., 1.])
+20.9855 	EXP 	Background_3: envphase = array([0., 0.])
+20.9855 	EXP 	Background_3: envori = 0.0
+20.9855 	EXP 	Background_3: moddepth = 1.0
+20.9855 	EXP 	Background_3: power = 1.0
+20.9855 	EXP 	Background_3: beat = False
+20.9855 	EXP 	Background_3: blendmode = 'avg'
+20.9855 	EXP 	Background_4: interpolate = True
+20.9855 	EXP 	Background_4: texRes = 128
+20.9855 	EXP 	Background_4: mask = None
+20.9855 	EXP 	Background_4: envelope = 'sin'
+20.9855 	EXP 	Background_4: carrier = None
+20.9855 	EXP 	Background_4: envsf = array([1., 1.])
+20.9855 	EXP 	Background_4: envphase = array([0., 0.])
+20.9855 	EXP 	Background_4: envori = 0.0
+20.9855 	EXP 	Background_4: moddepth = 1.0
+20.9855 	EXP 	Background_4: power = 1.0
+20.9855 	EXP 	Background_4: beat = False
+20.9855 	EXP 	Background_4: blendmode = 'avg'
+20.9855 	EXP 	Background_5: interpolate = True
+20.9855 	EXP 	Background_5: texRes = 128
+20.9855 	EXP 	Background_5: mask = None
+20.9855 	EXP 	Background_5: envelope = 'sin'
+20.9855 	EXP 	Background_5: carrier = None
+20.9855 	EXP 	Background_5: envsf = array([1., 1.])
+20.9855 	EXP 	Background_5: envphase = array([0., 0.])
+20.9855 	EXP 	Background_5: envori = 0.0
+20.9855 	EXP 	Background_5: moddepth = 1.0
+20.9855 	EXP 	Background_5: power = 1.0
+20.9855 	EXP 	Background_5: beat = False
+20.9855 	EXP 	Background_5: blendmode = 'avg'
+20.9855 	EXP 	Background_6: interpolate = True
+20.9855 	EXP 	Background_6: texRes = 128
+20.9855 	EXP 	Background_6: mask = None
+20.9855 	EXP 	Background_6: envelope = 'sin'
+20.9855 	EXP 	Background_6: carrier = None
+20.9855 	EXP 	Background_6: envsf = array([1., 1.])
+20.9855 	EXP 	Background_6: envphase = array([0., 0.])
+20.9855 	EXP 	Background_6: envori = 0.0
+20.9855 	EXP 	Background_6: moddepth = 1.0
+20.9855 	EXP 	Background_6: power = 1.0
+20.9855 	EXP 	Background_6: beat = False
+20.9855 	EXP 	Background_6: blendmode = 'avg'
+20.9855 	EXP 	Background_1: autoDraw = True
+20.9855 	EXP 	text_2: autoDraw = True
+22.0115 	DATA 	Keypress: space
+22.0183 	EXP 	Background_1: autoDraw = False
+22.0183 	EXP 	text_2: autoDraw = False
+22.0183 	EXP 	text: text = 'You will hear numbers read aloud, one number at a time.\n\nWhen the number heard matches the number presented three numbers back, press the V key. For example, if the fourth number is the same as the first number, press the V key at the fourth number.\n\nWhen the number heard does NOT match the number presented three numbers back, press the N key.\n\nPlease try to respond as accurately and as fast as possible.\n\nYou can start responding at the FOURTH number you hear onwards. \n\nPress SPACEBAR to begin.'
+22.0183 	EXP 	Background_2: autoDraw = True
+22.0183 	EXP 	text: autoDraw = True
+31.4464 	EXP 	Imported ThreeBackCond-practice.xlsx as conditions, 22 conditions, 5 params
+31.4470 	EXP 	Created sequence: sequential, trialTypes=22, nReps=1, seed=None
+31.4474 	EXP 	New trial (rep=0, index=0): OrderedDict([('BlockNum', 1), ('TrialNum', 1), ('Stim', 'three.wav'), ('Target', None), ('CorrAns', None)])
+31.4511 	DATA 	Keypress: space
+31.4569 	EXP 	Background_2: autoDraw = False
+31.4569 	EXP 	text: autoDraw = False
+31.4569 	EXP 	Background_3: autoDraw = True
+31.4569 	EXP 	Fixation: autoDraw = True
+31.9703 	EXP 	Fixation: autoDraw = False
+33.9226 	EXP 	New trial (rep=0, index=1): OrderedDict([('BlockNum', 1), ('TrialNum', 2), ('Stim', 'three.wav'), ('Target', None), ('CorrAns', None)])
+33.9368 	EXP 	Background_3: autoDraw = False
+33.9368 	EXP 	Fixation: autoDraw = False
+33.9368 	EXP 	Background_3: autoDraw = True
+33.9368 	EXP 	Fixation: autoDraw = True
+34.4367 	EXP 	Fixation: autoDraw = False
+36.4120 	EXP 	New trial (rep=0, index=2): OrderedDict([('BlockNum', 1), ('TrialNum', 3), ('Stim', 'three.wav'), ('Target', None), ('CorrAns', None)])
+36.4244 	EXP 	Background_3: autoDraw = False
+36.4244 	EXP 	Fixation: autoDraw = False
+36.4244 	EXP 	Background_3: autoDraw = True
+36.4244 	EXP 	Fixation: autoDraw = True
+36.9238 	EXP 	Fixation: autoDraw = False
+38.9112 	EXP 	New trial (rep=0, index=3): OrderedDict([('BlockNum', 1), ('TrialNum', 4), ('Stim', 'two.wav'), ('Target', 'NT'), ('CorrAns', 'n')])
+38.9243 	EXP 	Background_3: autoDraw = False
+38.9243 	EXP 	Fixation: autoDraw = False
+38.9243 	EXP 	Background_3: autoDraw = True
+38.9243 	EXP 	Fixation: autoDraw = True
+39.4242 	EXP 	Fixation: autoDraw = False
+40.4431 	DATA 	Keypress: n
+41.4117 	EXP 	New trial (rep=0, index=4): OrderedDict([('BlockNum', 1), ('TrialNum', 5), ('Stim', 'seven.wav'), ('Target', 'NT'), ('CorrAns', 'n')])
+41.4242 	EXP 	Background_3: autoDraw = False
+41.4242 	EXP 	Fixation: autoDraw = False
+41.4242 	EXP 	Background_3: autoDraw = True
+41.4242 	EXP 	Fixation: autoDraw = True
+41.9244 	EXP 	Fixation: autoDraw = False
+43.9139 	EXP 	New trial (rep=0, index=5): OrderedDict([('BlockNum', 1), ('TrialNum', 6), ('Stim', 'three.wav'), ('Target', 'T'), ('CorrAns', 'v')])
+43.9251 	EXP 	Background_3: autoDraw = False
+43.9251 	EXP 	Fixation: autoDraw = False
+43.9251 	EXP 	Background_3: autoDraw = True
+43.9251 	EXP 	Fixation: autoDraw = True
+44.4254 	EXP 	Fixation: autoDraw = False
+46.4107 	EXP 	New trial (rep=0, index=6): OrderedDict([('BlockNum', 1), ('TrialNum', 7), ('Stim', 'four.wav'), ('Target', 'NT'), ('CorrAns', 'n')])
+46.4251 	EXP 	Background_3: autoDraw = False
+46.4251 	EXP 	Fixation: autoDraw = False
+46.4251 	EXP 	Background_3: autoDraw = True
+46.4251 	EXP 	Fixation: autoDraw = True
+46.9256 	EXP 	Fixation: autoDraw = False
+48.9141 	EXP 	New trial (rep=0, index=7): OrderedDict([('BlockNum', 1), ('TrialNum', 8), ('Stim', 'four.wav'), ('Target', 'NT'), ('CorrAns', 'n')])
+48.9258 	EXP 	Background_3: autoDraw = False
+48.9258 	EXP 	Fixation: autoDraw = False
+48.9258 	EXP 	Background_3: autoDraw = True
+48.9258 	EXP 	Fixation: autoDraw = True
+49.4254 	EXP 	Fixation: autoDraw = False
+50.7446 	DATA 	Keypress: n
+51.4139 	EXP 	New trial (rep=0, index=8): OrderedDict([('BlockNum', 1), ('TrialNum', 9), ('Stim', 'three.wav'), ('Target', 'T'), ('CorrAns', 'v')])
+51.4267 	EXP 	Background_3: autoDraw = False
+51.4267 	EXP 	Fixation: autoDraw = False
+51.4267 	EXP 	Background_3: autoDraw = True
+51.4267 	EXP 	Fixation: autoDraw = True
+51.9421 	EXP 	Fixation: autoDraw = False
+53.9114 	EXP 	New trial (rep=0, index=9): OrderedDict([('BlockNum', 1), ('TrialNum', 10), ('Stim', 'six.wav'), ('Target', 'NT'), ('CorrAns', 'n')])
+53.9258 	EXP 	Background_3: autoDraw = False
+53.9258 	EXP 	Fixation: autoDraw = False
+53.9258 	EXP 	Background_3: autoDraw = True
+53.9258 	EXP 	Fixation: autoDraw = True
+54.4259 	EXP 	Fixation: autoDraw = False
+56.4125 	EXP 	New trial (rep=0, index=10): OrderedDict([('BlockNum', 1), ('TrialNum', 11), ('Stim', 'three.wav'), ('Target', 'NT'), ('CorrAns', 'n')])
+56.4261 	EXP 	Background_3: autoDraw = False
+56.4261 	EXP 	Fixation: autoDraw = False
+56.4261 	EXP 	Background_3: autoDraw = True
+56.4261 	EXP 	Fixation: autoDraw = True
+56.9259 	EXP 	Fixation: autoDraw = False
+58.3470 	DATA 	Keypress: n
+58.9150 	EXP 	New trial (rep=0, index=11): OrderedDict([('BlockNum', 1), ('TrialNum', 12), ('Stim', 'three.wav'), ('Target', 'T'), ('CorrAns', 'v')])
+58.9275 	EXP 	Background_3: autoDraw = False
+58.9275 	EXP 	Fixation: autoDraw = False
+58.9275 	EXP 	Background_3: autoDraw = True
+58.9275 	EXP 	Fixation: autoDraw = True
+59.4277 	EXP 	Fixation: autoDraw = False
+61.4178 	EXP 	New trial (rep=0, index=12): OrderedDict([('BlockNum', 1), ('TrialNum', 13), ('Stim', 'seven.wav'), ('Target', 'NT'), ('CorrAns', 'n')])
+61.4305 	EXP 	Background_3: autoDraw = False
+61.4305 	EXP 	Fixation: autoDraw = False
+61.4305 	EXP 	Background_3: autoDraw = True
+61.4305 	EXP 	Fixation: autoDraw = True
+61.9303 	EXP 	Fixation: autoDraw = False
+63.9188 	EXP 	New trial (rep=0, index=13): OrderedDict([('BlockNum', 1), ('TrialNum', 14), ('Stim', 'nine.wav'), ('Target', 'NT'), ('CorrAns', 'n')])
+63.9310 	EXP 	Background_3: autoDraw = False
+63.9310 	EXP 	Fixation: autoDraw = False
+63.9310 	EXP 	Background_3: autoDraw = True
+63.9310 	EXP 	Fixation: autoDraw = True
+64.4321 	EXP 	Fixation: autoDraw = False
+65.5846 	DATA 	Keypress: n
+66.4174 	EXP 	New trial (rep=0, index=14): OrderedDict([('BlockNum', 1), ('TrialNum', 15), ('Stim', 'five.wav'), ('Target', 'NT'), ('CorrAns', 'n')])
+66.4317 	EXP 	Background_3: autoDraw = False
+66.4317 	EXP 	Fixation: autoDraw = False
+66.4317 	EXP 	Background_3: autoDraw = True
+66.4317 	EXP 	Fixation: autoDraw = True
+66.9313 	EXP 	Fixation: autoDraw = False
+68.9167 	EXP 	New trial (rep=0, index=15): OrderedDict([('BlockNum', 1), ('TrialNum', 16), ('Stim', 'seven.wav'), ('Target', 'T'), ('CorrAns', 'v')])
+68.9315 	EXP 	Background_3: autoDraw = False
+68.9315 	EXP 	Fixation: autoDraw = False
+68.9315 	EXP 	Background_3: autoDraw = True
+68.9315 	EXP 	Fixation: autoDraw = True
+69.4320 	EXP 	Fixation: autoDraw = False
+71.4194 	EXP 	New trial (rep=0, index=16): OrderedDict([('BlockNum', 1), ('TrialNum', 17), ('Stim', 'nine.wav'), ('Target', 'T'), ('CorrAns', 'v')])
+71.4322 	EXP 	Background_3: autoDraw = False
+71.4322 	EXP 	Fixation: autoDraw = False
+71.4322 	EXP 	Background_3: autoDraw = True
+71.4322 	EXP 	Fixation: autoDraw = True
+71.9321 	EXP 	Fixation: autoDraw = False
+72.7525 	DATA 	Keypress: v
+73.9200 	EXP 	New trial (rep=0, index=17): OrderedDict([('BlockNum', 1), ('TrialNum', 18), ('Stim', 'eight.wav'), ('Target', 'NT'), ('CorrAns', 'n')])
+73.9325 	EXP 	Background_3: autoDraw = False
+73.9325 	EXP 	Fixation: autoDraw = False
+73.9325 	EXP 	Background_3: autoDraw = True
+73.9325 	EXP 	Fixation: autoDraw = True
+74.4323 	EXP 	Fixation: autoDraw = False
+76.4207 	EXP 	New trial (rep=0, index=18): OrderedDict([('BlockNum', 1), ('TrialNum', 19), ('Stim', 'two.wav'), ('Target', 'NT'), ('CorrAns', 'n')])
+76.4329 	EXP 	Background_3: autoDraw = False
+76.4329 	EXP 	Fixation: autoDraw = False
+76.4329 	EXP 	Background_3: autoDraw = True
+76.4329 	EXP 	Fixation: autoDraw = True
+76.9327 	EXP 	Fixation: autoDraw = False
+78.9210 	EXP 	New trial (rep=0, index=19): OrderedDict([('BlockNum', 1), ('TrialNum', 20), ('Stim', 'two.wav'), ('Target', 'NT'), ('CorrAns', 'n')])
+78.9330 	EXP 	Background_3: autoDraw = False
+78.9330 	EXP 	Fixation: autoDraw = False
+78.9330 	EXP 	Background_3: autoDraw = True
+78.9330 	EXP 	Fixation: autoDraw = True
+79.4331 	EXP 	Fixation: autoDraw = False
+80.9533 	DATA 	Keypress: n
+81.4204 	EXP 	New trial (rep=0, index=20): OrderedDict([('BlockNum', 1), ('TrialNum', 21), ('Stim', 'eight.wav'), ('Target', 'T'), ('CorrAns', 'v')])
+81.4333 	EXP 	Background_3: autoDraw = False
+81.4333 	EXP 	Fixation: autoDraw = False
+81.4333 	EXP 	Background_3: autoDraw = True
+81.4333 	EXP 	Fixation: autoDraw = True
+81.9334 	EXP 	Fixation: autoDraw = False
+83.9215 	EXP 	New trial (rep=0, index=21): OrderedDict([('BlockNum', 1), ('TrialNum', 22), ('Stim', 'three.wav'), ('Target', 'NT'), ('CorrAns', 'n')])
+83.9342 	EXP 	Background_3: autoDraw = False
+83.9342 	EXP 	Fixation: autoDraw = False
+83.9342 	EXP 	Background_3: autoDraw = True
+83.9342 	EXP 	Fixation: autoDraw = True
+84.4351 	EXP 	Fixation: autoDraw = False
+86.4670 	EXP 	Background_3: autoDraw = False
+86.4670 	EXP 	Fixation: autoDraw = False
+86.4670 	EXP 	text_3: text = ' Correct Trials = 6 trials \n Wrong Trials = 5 \n Missed trials = 13 \n Hit rate = 25.00'
+86.4670 	EXP 	Background_4: autoDraw = True
+86.4670 	EXP 	text_3: autoDraw = True
+97.9749 	DATA 	Keypress: space
+97.9865 	EXP 	Background_4: autoDraw = False
+97.9865 	EXP 	text_3: autoDraw = False
+97.9865 	EXP 	Background_5: autoDraw = True
+97.9865 	EXP 	BreakMsg: autoDraw = True
+99.1420 	DATA 	Keypress: space
+99.1534 	EXP 	Background_5: autoDraw = False
+99.1534 	EXP 	BreakMsg: autoDraw = False
+99.1534 	EXP 	Background_6: autoDraw = True
+99.1534 	EXP 	text_4: autoDraw = True
+99.7897 	DATA 	Keypress: space
+99.8043 	EXP 	Background_6: autoDraw = False
+99.8043 	EXP 	text_4: autoDraw = False
+100.0078 	EXP 	window1: mouseVisible = True

@@ -388,6 +388,57 @@ geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 3)
 
 ```
 
+```{r}
+pvt_raw <- read_excel("Processeddata/apvt.xlsx")
+pvt_raw <- as.data.frame(lapply(pvt_raw, as.numeric))
+pvt_speed <- as.data.frame(lapply(pvt_raw, function(x) 1/x))
+
+
+
+participant_1 <- mean(pvt_speed$Participant1)
+participant_2<- mean(pvt_speed$Participant2)
+participant_3<- mean(pvt_speed$Participant3)
+participant_4<- mean(pvt_speed$Participant4)
+participant_5<- mean(pvt_speed$Participant5)
+participant_6<- mean(pvt_speed$Participant6)
+participant_7<- mean(pvt_speed$Participant7)
+participant_8<- mean(pvt_speed$Participant8)
+participant_9<- mean(pvt_speed$Participant9)
+participant_10<- mean(pvt_speed$Participant10)
+participant_11<- mean(pvt_speed$Participant11)
+participant_13<- mean(pvt_speed$Participant13)
+participant_14<- mean(pvt_speed$Participant14)
+participant_15<- mean(pvt_speed$Participant15)
+participant_16<- mean(pvt_speed$Participant16)
+participant_17<- mean(pvt_speed$Participant17)
+participant_18<- mean(pvt_speed$Participant18)
+participant_19<- mean(pvt_speed$Participant19)
+participant_20<- mean(pvt_speed$Participant20)
+participant_21<- mean(pvt_speed$Participant21)
+participant_22<- mean(pvt_speed$Participant22)
+participant_23<- mean(pvt_speed$Participant23)
+participant_24<- mean(pvt_speed$Participant24)
+participant_25<- mean(pvt_speed$Participant25)
+
+speed <- rbind(participant_1, participant_2,participant_3,participant_4,participant_4,participant_6,
+               participant_7,participant_8,participant_9,participant_10,participant_11,participant_13,participant_14,participant_15,participant_16,participant_17,participant_18,
+               participant_19,participant_20,participant_21,participant_22,participant_23,participant_24,participant_25)
+
+speed_data <- as.data.frame(cbind(data$light_conditions,speed))
+colnames(speed_data) <- c("Light_Settings", "Speed")
+
+speed_data$Speed <- as.numeric(speed_data$Speed)
+speed_data$Light_Settings <- as.factor(speed_data$Light_Settings)
+apvt_speed_robust_model <- WRS2::t1way(Speed*1000 ~ Light_Settings, data = speed_data , tr=.1,nboot = 1000)
+
+
+
+speed_data$miss_transform <- sqrt(data$total_miss_aPVT)+sqrt(data$total_miss_aPVT+1)
+apvt_mt_robust_model <- WRS2::t1way(miss_transform  ~ Light_Settings, data = speed_data , tr=.1,nboot = 1000)
+
+```
+
+
 ```{r apvt}
 aPVT <- data %>% 
   dplyr::select ("Light_Settings", "aPVT_RT", "total_miss_aPVT", "10%_fastest")

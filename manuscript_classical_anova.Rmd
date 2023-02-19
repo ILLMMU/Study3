@@ -131,12 +131,12 @@ apatheme=theme_bw()+
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
-        axis.text.x = element_text(size = 8),
-        axis.text.y = element_text(size = 8),
-        axis.title.x = element_text(size = 8),
-        axis.title.y = element_text(size = 8),
-        plot.title = element_text(size = 10),
-        legend.text = element_text(size =10),
+        axis.text.x = element_text(size = 12),
+        axis.text.y = element_text(size = 12),
+        axis.title.x = element_text(size = 12),
+        axis.title.y = element_text(size = 12),
+        plot.title = element_text(size = 12),
+        legend.text = element_text(size =12),
         legend.title=element_blank(),
         axis.line.x = element_line(color='black'),
         axis.line.y = element_line(color='black'),
@@ -164,26 +164,41 @@ ls.3$Condition <- ls.3$Condition %>%
 spectrum <- ggplot(ls.3, aes(x= Wavelength, y= value, color = Condition))+ geom_line()+apatheme+
   xlab("Wavelength(nm)")+scale_x_continuous(breaks=c(380, 420, 460, 500, 540, 580, 620, 660, 700, 740, 780), limits = c(380,780))+theme(legend.position = "bottom")+
   ylab(expression("Spectral irradiance" (μW/cm^2/nm)))+
-  scale_color_manual(values=c('blue',"#7E6148B2", "#DC0000B2"))
+  scale_color_manual(values=c('blue',"#7E6148B2", "#DC0000B2"))+
+  theme(axis.title.x = element_text(size = 14),
+        axis.title.y = element_text(size = 14))
 
 
 
 
-ggsave("Figures/spectrum.png",spectrum, width=4.5, height=3.5)
+ggsave("Figures/spectrum.png",spectrum, width=5, height=4)
 
 ```
 
 
 ```{r plot-legends}
-Low <- "Low MDER"
-Neutral <- "Neutral MDER"
-High <- "High MDER"
+Low <- "Low"
+Neutral <- "Neutral"
+High <- "High"
 
 
 Low_color <- "#DC0000B2"
 Neutral_color <- "#7E6148B2"
 High_color <- "blue"
 
+```
+
+
+```{r outlier-formula,include=FALSE}
+#This chunk hold the formula to identify and adjest outliers
+outadj <- function(x, y){
+Q <- quantile(y, probs=c(.25, .75), na.rm = T)
+iqr <- IQR(y)
+up <-  Q[2]+1.5*iqr # Upper Range  
+low<- Q[1]-1.5*iqr # Lower Range
+eliminated<- subset(x, y > (Q[1] - 1.5*iqr) & y < (Q[2]+1.5*iqr))
+eliminated
+}
 ```
 
 
@@ -205,7 +220,7 @@ light_indices_summary <- light_indices %>%
 
 # Methods
 
-We report how we determined our sample size, all data exclusions (if any), all manipulations, and all measures in the study. <!-- 21-word solution (Simmons, Nelson & Simonsohn, 2012; retrieved from http://ssrn.com/abstract=2160588) -->
+
 
 ## Participants
 
@@ -254,7 +269,6 @@ description_gender <- psych::describe.by(demographics,  "Gender")
 
 ```
 
-Twenty four healthy university students age ranging between `r description$min[2]`-`r description$max[2]`( mean age ± SD:`r MOTE::apa(description$mean[2],2,T)`±`r MOTE::apa(description$sd[2],2,T)`)- 16 females, (Mean age ± SD = `r MOTE::apa(description_gender$Female$mean[2],2,T)`±`r MOTE::apa(description_gender$Female$sd[2],2,T)` ) and 8 males (Mean age ± SD = `r MOTE::apa(description_gender$Male$mean[2],2,T)`±`r MOTE::apa(description_gender$Male$sd[2],2,T)` ) were studies in the Intelligent Lighting Lab at Monash University Malaysia. The study obtained ethics clearance from the Monash University Human Research Ethics Committee (Project ID: 14786) and participants provided written informed consent prior to study. All participants reported to be free from medial and psychological conditions and had no color blindness  (tested by Ishihara Blindness Test [@clark1924ishihara]). Majority of them were poor sleeper (`r desc_tibble[12,2]`) and had intermediate chronotype (`r desc_tibble[15,2]`).
 
 
 ```{r demotab, warning=F, message=F}
@@ -264,23 +278,20 @@ apa_table(desc_kable)
 
 
 ## Light Exposure Conditions
-The experimental site was at Intelligent Light Lab, Monash University Malaysia (length x width x height; xx m by xx m by xx m). The lab was furnished with one ractangular working desk with three chairs. The walls of the lab was covered with grey cartains and all glass windows were covered by blackout blinds. The room temperature was set to 25$^0$ C. The three light conditions were generated using 12 Phillips tuneable LED ceiling mounted luminaries. We have measured the light sources at the horizontal plane at desk level (80 cm) and the vertical plane at eye level of the participants seated at the desk (122 cm). Figure XX  depicts the spectral composition of the three light conditions. Table XX presents alpha-opic melanopic equivalent daylight illuminances (Melanopic EDI) and melanopic daylight efficacy ratio (MDER) values both at desk and eyelevel for the three light conditions: (a) high MDER light settings (HM):`r light_indices[1,10]` MDER, `r light_indices[1,6]` MEDI, `r light_indices[1,11]` K; (b) neutral MDER light settings (NM):`r light_indices[2,10]` MDER, `r light_indices[2,6]` MEDI, `r light_indices[2,11]` K;  and (c) low MDER light settings (LM): `r light_indices[3,10]` MDER, `r light_indices[3,6]` MEDI, `r light_indices[3,11]` K. For all light conditions At the beginning of each sessions the light exposure level was maintained at approximately 250 photopic lx at the horizontal plane (79.23 μW/cm$^2$) and approximately 139 lx (42.79 μW/cm$^2$) at the vertical plane for thirty minutes. After this adaptation period, the photopic lx of  three light settings were kept ~250 lx at desk level (Mean=`r MOTE::apa(light_indices_summary$mean_photopic[1],2,T)`; SD=±`r MOTE::apa(light_indices_summary$sd_photopic[2],2,T)`). In vertical plane at eye level the mean photopic lx was `r MOTE::apa(light_indices_summary$mean_photopic[1],2,T)` (SD=±`r MOTE::apa(light_indices_summary$sd_photopic[2],2,T)`). The α-opic values and MDER values are obtained using Loux software (Spitschan et al., 2022) and CIE S 026:2018 toolbox (Schlangen, 2020) following the CIE S 026 guidelines (CIE, 2018b). 
 
 
 ## Study Protocol
-Participants were asked not to ingest any caffeine and drink alcohol on the experiment day. Each session started with a practice block to familiarize the participants with the cognitive tests. Each participant spent approximately two hours in our lab in a time cue free environment (all doors and windows covered with blinds, no watches, internet, mobile, TV, newspaper and radio). Participants were randomly assigned to one the light conditions and were allowed thirty minutes to attune to the light condition. During this thirty minutes they answered a series of a questionnaire regarding their demographic information sleep quality, chronotype and completed Ishihara Blindness Test [@clark1924ishihara]. Throughout the two hour protocol participants remained seated at their desks. Exercising and napping were not allowed. Participants took part in a series of cognitive tests in the following order: aPVT, N-back test, digit span, and Tower of London test . Subjective measures of sleepiness  were recorded both at the beginning and the end of the protocol.
+
 
 ## Data analysis
 
-We used R [@R-base] for all our analyses using packages including psych [@R-psych], tabledown, and WRS2 [@R-WRS2]. Classical ANOVA methods assumes normality and homoscedascity and any violation to these assumptions raise serious practical concerns. Hence we used 10% trimmed mean based robust oneway or factorial anova which were less prone to these these assumption violations and outliers [@R-WRS2]. "t1way"  and "bwtrim" functions from the package "WRS2"[@R-WRS2] were used to conduct the robust oneway and factorial ANOVA respectively. We reported$\xi$ as the explanatory measure of the effect size where 0.10, 0.30, 0.50 correspond to small, medium and large effect size. The confidence interval of the effect size was estimated using 1000 bootstrap samples [@wilcox2011measuring]. In case of a significant F statistics we conducted robust pairwise post-hoc tests to compare  the three light conditions using "lincon" function with Bonferroni correction from WRS2.   
+
 
 # Results
 
 ## Alerting effects
 
-We observed a significant differences in subjective sleepiness across the three light settings [F(2,11.7)=4.85, p=0.03, $\xi$ = 0.69 (CI: 0.42-1.04)]. Post-hoc tests revealed that there was a trend of reporting decreased subjective sleepiness (beginning of the protocol vs end of the protocol) in High condition compared to Low ($\hat{\psi}$ =--1.71; p=0.09) and Neutral ($\hat{\psi}$ = --1.86; p=0.07) light conditions. No significant difference between Low and neutral light condition was observed (p=1.0).
 
-In aPVT, we did not observe any significant effect of light conditions on general reaction time [F(2,10.1)=1.29, p=0.32, $\xi$ = 0.54 (CI: 0.21-1.03)], attention lapses [F(2,10.99)=0.49, p=0.63, $\xi$ = 0.34 (CI: 0.07-0.73)], and 10% fastest reaction time [F(2,12.21)=0.09, p=0.91, $\xi$ = 0.29 (CI: 0.06-0.66) ]
 
 
 ```{r Kss-anova}
@@ -297,13 +308,15 @@ KSS_summary <- KSS %>%
             SEM = SD / sqrt(n))
 
 
-kss_robust_model <- WRS2::t1way(KSS_DIF ~ Light_Settings, data = KSS, tr=.1, nboot = 1000)
-# WRS2::t1way(KSS_DIF ~ Light_Settings, data = KSS,  nboot = 1000)
-post_hoc_kss <- WRS2::lincon(KSS_DIF ~ Light_Settings, data = KSS,method="bonferroni", tr=.1, nboot = 1000)
+kss_anova_model <- aov(KSS_DIF ~ Light_Settings, data = KSS)
 
+Kss_summary <- summary(kss_anova_model)
 
-WRS2::yuen.effect.ci(KSS_DIF ~ Light_Settings, data = KSS)
+effectsize::effectsize(kss_anova_model)
 
+TukeyHSD(kss_anova_model, data = KSS)
+
+pairwise.t.test(KSS$KSS_DIF, KSS$Light_Settings, p.adj='bonferroni')
 
 ```
 
@@ -317,7 +330,8 @@ metadata_kss <- KSS %>%
 
 kss_plot <- metadata_kss %>%
   ggplot(aes(x= Light_Settings, y = KSS_DIF, fill = Light_Settings)) +
-  stat_summary(fun.data = mean_se, geom = "errorbar", width =0.5)+ 
+  # geom_boxplot(show.legend = FALSE)+
+  stat_summary(fun.data = mean_se, geom = "errorbar", width =0.5)+
   stat_summary(fun.data = mean_se, geom = "bar", show.legend = FALSE,width = .5, alpha=1)+
   # geom_jitter(show.legend=FALSE, width=0.25, shape=21, color="black") +
   labs(x=NULL,
@@ -329,7 +343,7 @@ kss_plot <- metadata_kss %>%
                     labels=c(Low, Neutral, High),
                     values=c(Low_color, Neutral_color, High_color)) +
   apatheme +
-  theme(axis.text.x = element_markdown())+
+  theme(axis.text.x = element_markdown())
   # scale_y_continuous(expand = expansion(mult = c(0, .1)), breaks= c(-2,-1,0,1,2,3))+
   geom_hline(yintercept=0)
 
@@ -372,7 +386,7 @@ stars <- tibble(
   x = c(1.5,2, 2.5),
   
   y = lines$y_lines+.2,
-  label =c("n.s",  "p=.0.09", "p=0.07")
+  label =c("n.s",  "*", "*")
 )
 
 
@@ -380,7 +394,7 @@ anova_kss_plot <- kss_plot +
   geom_segment(data=lines, aes(x =x_lines, xend =xend_lines, y=y_lines, yend=yend_lines), inherit.aes = F)+
   geom_segment(data=vlines_left, aes(x =x_vlines_left, xend =xend_vlines_left, y=y_vlines_left, yend=yend_vlines_left), inherit.aes = F)+
   geom_segment(data=vlines_right, aes(x =x_vlines_right, xend =xend_vlines_right, y=y_vlines_right, yend=yend_vlines_right), inherit.aes = F)+
-geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 3) 
+geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 5) 
 
 # ggsave("Figures/Figure7.png", width=9, height=7)
 
@@ -388,107 +402,667 @@ geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 3)
 
 ```
 
-```{r}
-pvt_raw <- read_excel("Processeddata/apvt.xlsx")
-pvt_raw <- as.data.frame(lapply(pvt_raw, as.numeric))
-pvt_speed <- as.data.frame(lapply(pvt_raw, function(x) 1/x))
+```{r PVT}
+pvt_raw <- read_excel("Processeddata/aPVT_RT_2.xlsx")
+
+pvt_raw.numeric <- pvt_raw[,-1]
+pvt_raw.base <- pvt_raw[,1]
+pvt_raw.conversion <- as.data.frame(lapply(pvt_raw.numeric, function(x) x*1000 ))
+
+
+pvt_data <- cbind(pvt_raw.base,pvt_raw.conversion)
+
+pvt_long <- pivot_longer(pvt_data,
+                              cols=-1,
+                              names_to="Trials",
+                              values_to = "RT")
 
 
 
-participant_1 <- mean(pvt_speed$Participant1)
-participant_2<- mean(pvt_speed$Participant2)
-participant_3<- mean(pvt_speed$Participant3)
-participant_4<- mean(pvt_speed$Participant4)
-participant_5<- mean(pvt_speed$Participant5)
-participant_6<- mean(pvt_speed$Participant6)
-participant_7<- mean(pvt_speed$Participant7)
-participant_8<- mean(pvt_speed$Participant8)
-participant_9<- mean(pvt_speed$Participant9)
-participant_10<- mean(pvt_speed$Participant10)
-participant_11<- mean(pvt_speed$Participant11)
-participant_13<- mean(pvt_speed$Participant13)
-participant_14<- mean(pvt_speed$Participant14)
-participant_15<- mean(pvt_speed$Participant15)
-participant_16<- mean(pvt_speed$Participant16)
-participant_17<- mean(pvt_speed$Participant17)
-participant_18<- mean(pvt_speed$Participant18)
-participant_19<- mean(pvt_speed$Participant19)
-participant_20<- mean(pvt_speed$Participant20)
-participant_21<- mean(pvt_speed$Participant21)
-participant_22<- mean(pvt_speed$Participant22)
-participant_23<- mean(pvt_speed$Participant23)
-participant_24<- mean(pvt_speed$Participant24)
-participant_25<- mean(pvt_speed$Participant25)
-
-speed <- rbind(participant_1, participant_2,participant_3,participant_4,participant_4,participant_6,
-               participant_7,participant_8,participant_9,participant_10,participant_11,participant_13,participant_14,participant_15,participant_16,participant_17,participant_18,
-               participant_19,participant_20,participant_21,participant_22,participant_23,participant_24,participant_25)
-
-speed_data <- as.data.frame(cbind(data$light_conditions,speed))
-colnames(speed_data) <- c("Light_Settings", "Speed")
-
-speed_data$Speed <- as.numeric(speed_data$Speed)
-speed_data$Light_Settings <- as.factor(speed_data$Light_Settings)
-apvt_speed_robust_model <- WRS2::t1way(Speed*1000 ~ Light_Settings, data = speed_data , tr=.1,nboot = 1000)
+#P001
 
 
-
-speed_data$miss_transform <- sqrt(data$total_miss_aPVT)+sqrt(data$total_miss_aPVT+1)
-apvt_mt_robust_model <- WRS2::t1way(miss_transform  ~ Light_Settings, data = speed_data , tr=.1,nboot = 1000)
-
-```
+P001_pvt_data <- pvt_long  %>%
+  filter(Id=="P001")
 
 
-```{r apvt}
-aPVT <- data %>% 
-  dplyr::select ("Light_Settings", "aPVT_RT", "total_miss_aPVT", "10%_fastest")
+#P002
+
+P002_pvt_data <- pvt_long  %>%
+  filter(Id=="P002")
+
+#P003
+
+P003_pvt_data <- pvt_long  %>%
+  filter(Id=="P003")
+
+#P004
+P004_pvt_data <- pvt_long  %>%
+  filter(Id=="P004")
+#P005
+P005_pvt_data <- pvt_long  %>%
+  filter(Id=="P005")
+#P006
+P006_pvt_data <- pvt_long  %>%
+  filter(Id=="P006")
+#P007
+P007_pvt_data <- pvt_long  %>%
+  filter(Id=="P007")
+
+#P008
+P008_pvt_data <- pvt_long  %>%
+  filter(Id=="P008")
+
+#P009
+P009_pvt_data <- pvt_long  %>%
+  filter(Id=="P009")
+
+#P010
+P010_pvt_data <- pvt_long  %>%
+  filter(Id=="P010")
+
+#P011
+P011_pvt_data <- pvt_long  %>%
+  filter(Id=="P011")
+
+#P013
+
+P013_pvt_data <- pvt_long  %>%
+  filter(Id=="P013")
+
+#P014
+P014_pvt_data <- pvt_long  %>%
+  filter(Id=="P014")
+
+#P015
+P015_pvt_data <- pvt_long  %>%
+  filter(Id=="P015")
+
+#P016
+
+P016_pvt_data <- pvt_long  %>%
+  filter(Id=="P016")
+
+#P017
+P017_pvt_data <- pvt_long  %>%
+  filter(Id=="P017")
+
+
+#P018
+
+P018_pvt_data <- pvt_long  %>%
+  filter(Id=="P018")
+#P019
+
+P019_pvt_data <- pvt_long  %>%
+  filter(Id=="P019")
+
+#P020
+P020_pvt_data <- pvt_long  %>%
+  filter(Id=="P020")
+
+#P021
+
+P021_pvt_data <- pvt_long  %>%
+  filter(Id=="P021")
+#P022
+
+P022_pvt_data <- pvt_long  %>%
+  filter(Id=="P022")
+
+
+#P023
+
+P023_pvt_data <- pvt_long  %>%
+  filter(Id=="P023")
+
+#P024
+P024_pvt_data <- pvt_long  %>%
+  filter(Id=="P024")
+
+
+#P025
+
+P025_pvt_data <- pvt_long  %>%
+  filter(Id=="P025")
 
 
 
 
-aPVT_summary <-aPVT %>% 
+
+#P001
+
+P001_pvt_plot <- ggplot(P001_pvt_data , aes(x=Trials, y=RT))+
+  geom_col()+
+  scale_y_continuous(expand = expansion(mult = c(0, .1)))+
+  geom_hline(yintercept = 500, color="red")+theme_bw()+
+  geom_hline(yintercept = 100, color="green")+
+  theme(axis.text.x = element_text(angle = 90))+labs(title = "P001")+
+  theme(axis.text.x = element_text(size = 6))+
+  labs(x="Trial", y="RT (ms)")
+
+
+ggsave("Figures/apvt/P001_pvt_plot.png",P001_pvt_plot, width = 8, height = 3.5,
+       dpi = 300, bg = "white", units = "in")
+
+#P002
+
+P002_pvt_plot <- ggplot(P002_pvt_data , aes(x=Trials, y=RT))+
+  geom_col()+
+  scale_y_continuous(expand = expansion(mult = c(0, .1)))+
+  geom_hline(yintercept = 500, color="red")+theme_bw()+
+  geom_hline(yintercept = 100, color="green")+
+  theme(axis.text.x = element_text(angle = 90))+labs(title = "P002")+
+  theme(axis.text.x = element_text(size = 6))+
+  labs(x="Trial", y="RT (ms)")
+
+ggsave("Figures/apvt/P002_pvt_plot.png",P002_pvt_plot, width = 8, height = 3.5,
+       dpi = 300, bg = "white", units = "in")
+
+#P003
+
+P003_pvt_plot <- ggplot(P003_pvt_data , aes(x=Trials, y=RT))+
+  geom_col()+
+  scale_y_continuous(expand = expansion(mult = c(0, .1)))+
+  geom_hline(yintercept = 500, color="red")+theme_bw()+
+  geom_hline(yintercept = 100, color="green")+
+  theme(axis.text.x = element_text(angle = 90))+labs(title = "P003")+
+  theme(axis.text.x = element_text(size = 6))+
+  labs(x="Trial", y="RT (ms)")
+
+ggsave("Figures/apvt/P003_pvt_plot.png",P003_pvt_plot, width = 8, height = 3.5,
+       dpi = 300, bg = "white", units = "in")
+
+#P004
+P004_pvt_plot <- ggplot(P004_pvt_data , aes(x=Trials, y=RT))+
+  geom_col()+
+  scale_y_continuous(expand = expansion(mult = c(0, .1)))+
+  geom_hline(yintercept = 500, color="red")+theme_bw()+
+  geom_hline(yintercept = 100, color="green")+
+  theme(axis.text.x = element_text(angle = 90))+labs(title = "P004")+
+  theme(axis.text.x = element_text(size = 6))+
+  labs(x="Trial", y="RT (ms)")
+
+ggsave("Figures/apvt/P004_pvt_plot.png",P004_pvt_plot, width = 8, height = 3.5,
+       dpi = 300, bg = "white", units = "in")
+
+#P005
+P005_pvt_plot <- ggplot(P005_pvt_data , aes(x=Trials, y=RT))+
+  geom_col()+
+  scale_y_continuous(expand = expansion(mult = c(0, .1)))+
+  geom_hline(yintercept = 500, color="red")+theme_bw()+
+  geom_hline(yintercept = 100, color="green")+
+  theme(axis.text.x = element_text(angle = 90))+labs(title = "P005")+
+  theme(axis.text.x = element_text(size = 6))+
+  labs(x="Trial", y="RT (ms)")
+
+ggsave("Figures/apvt/P005_pvt_plot.png",P005_pvt_plot, width = 8, height = 3.5,
+       dpi = 300, bg = "white", units = "in")
+
+#P006
+P006_pvt_plot <- ggplot(P006_pvt_data , aes(x=Trials, y=RT))+
+  geom_col()+
+  scale_y_continuous(expand = expansion(mult = c(0, .1)))+
+  geom_hline(yintercept = 500, color="red")+theme_bw()+
+  geom_hline(yintercept = 100, color="green")+
+  theme(axis.text.x = element_text(angle = 90))+labs(title = "P006")+
+  theme(axis.text.x = element_text(size = 6))+
+  labs(x="Trial", y="RT (ms)")
+
+ggsave("Figures/apvt/P006_pvt_plot.png",P006_pvt_plot, width = 8, height = 3.5,
+       dpi = 300, bg = "white", units = "in")
+
+#P007
+P007_pvt_plot <- ggplot(P007_pvt_data , aes(x=Trials, y=RT))+
+  geom_col()+
+  scale_y_continuous(expand = expansion(mult = c(0, .1)))+
+  geom_hline(yintercept = 500, color="red")+theme_bw()+
+  geom_hline(yintercept = 100, color="green")+
+  theme(axis.text.x = element_text(angle = 90))+labs(title = "P007")+
+  theme(axis.text.x = element_text(size = 6))+
+  labs(x="Trial", y="RT (ms)")
+
+ggsave("Figures/apvt/P007_pvt_plot.png",P007_pvt_plot, width = 8, height = 3.5,
+       dpi = 300, bg = "white", units = "in")
+
+
+#P008
+P008_pvt_plot <- ggplot(P008_pvt_data , aes(x=Trials, y=RT))+
+  geom_col()+
+  scale_y_continuous(expand = expansion(mult = c(0, .1)))+
+  geom_hline(yintercept = 500, color="red")+theme_bw()+
+  geom_hline(yintercept = 100, color="green")+
+  theme(axis.text.x = element_text(angle = 90))+labs(title = "P008")+
+  theme(axis.text.x = element_text(size = 6))+
+  labs(x="Trial", y="RT (ms)")
+
+ggsave("Figures/apvt/P008_pvt_plot.png",P008_pvt_plot, width = 8, height = 3.5,
+       dpi = 300, bg = "white", units = "in")
+
+
+#P009
+P009_pvt_plot <- ggplot(P009_pvt_data , aes(x=Trials, y=RT))+
+  geom_col()+
+  scale_y_continuous(expand = expansion(mult = c(0, .1)))+
+  geom_hline(yintercept = 500, color="red")+theme_bw()+
+  geom_hline(yintercept = 100, color="green")+
+  theme(axis.text.x = element_text(angle = 90))+labs(title = "P009")+
+  theme(axis.text.x = element_text(size = 6))+
+  labs(x="Trial", y="RT (ms)")
+
+ggsave("Figures/apvt/P009_pvt_plot.png",P009_pvt_plot, width = 8, height = 3.5,
+       dpi = 300, bg = "white", units = "in")
+
+
+
+#P010
+P010_pvt_plot <- ggplot(P010_pvt_data , aes(x=Trials, y=RT))+
+  geom_col()+
+  scale_y_continuous(expand = expansion(mult = c(0, .1)))+
+  geom_hline(yintercept = 500, color="red")+theme_bw()+
+  geom_hline(yintercept = 100, color="green")+
+  theme(axis.text.x = element_text(angle = 90))+labs(title = "P010")+
+  theme(axis.text.x = element_text(size = 6))+
+  labs(x="Trial", y="RT (ms)")
+
+ggsave("Figures/apvt/P010_pvt_plot.png",P010_pvt_plot, width = 8, height = 3.5,
+       dpi = 300, bg = "white", units = "in")
+
+
+#P011
+P011_pvt_plot <- ggplot(P011_pvt_data , aes(x=Trials, y=RT))+
+  geom_col()+
+  scale_y_continuous(expand = expansion(mult = c(0, .1)))+
+  geom_hline(yintercept = 500, color="red")+theme_bw()+
+  geom_hline(yintercept = 100, color="green")+
+  theme(axis.text.x = element_text(angle = 90))+labs(title = "P011")+
+  theme(axis.text.x = element_text(size = 6))+
+  labs(x="Trial", y="RT (ms)")
+
+ggsave("Figures/apvt/P011_pvt_plot.png",P011_pvt_plot, width = 8, height = 3.5,
+       dpi = 300, bg = "white", units = "in")
+
+#P013
+
+P013_pvt_plot <- ggplot(P013_pvt_data , aes(x=Trials, y=RT))+
+  geom_col()+
+  scale_y_continuous(expand = expansion(mult = c(0, .1)))+
+  geom_hline(yintercept = 500, color="red")+theme_bw()+
+  geom_hline(yintercept = 100, color="green")+
+  theme(axis.text.x = element_text(angle = 90))+labs(title = "P013")+
+  theme(axis.text.x = element_text(size = 6))+
+  labs(x="Trial", y="RT (ms)")
+
+ggsave("Figures/apvt/P013_pvt_plot.png",P013_pvt_plot, width = 8, height = 3.5,
+       dpi = 300, bg = "white", units = "in")
+
+
+#P014
+P014_pvt_plot <- ggplot(P014_pvt_data , aes(x=Trials, y=RT))+
+  geom_col()+
+  scale_y_continuous(expand = expansion(mult = c(0, .1)))+
+  geom_hline(yintercept = 500, color="red")+theme_bw()+
+  geom_hline(yintercept = 100, color="green")+
+  theme(axis.text.x = element_text(angle = 90))+labs(title = "P014")+
+  theme(axis.text.x = element_text(size = 6))+
+  labs(x="Trial", y="RT (ms)")
+
+ggsave("Figures/apvt/P014_pvt_plot.png",P014_pvt_plot, width = 8, height = 3.5,
+       dpi = 300, bg = "white", units = "in")
+
+
+#P015
+P015_pvt_plot <- ggplot(P015_pvt_data , aes(x=Trials, y=RT))+
+  geom_col()+
+  scale_y_continuous(expand = expansion(mult = c(0, .1)))+
+  geom_hline(yintercept = 500, color="red")+theme_bw()+
+  geom_hline(yintercept = 100, color="green")+
+  theme(axis.text.x = element_text(angle = 90))+labs(title = "P015")+
+  theme(axis.text.x = element_text(size = 6))+
+  labs(x="Trial", y="RT (ms)")
+
+ggsave("Figures/apvt/P015_pvt_plot.png",P015_pvt_plot, width = 8, height = 3.5,
+       dpi = 300, bg = "white", units = "in")
+
+
+#P016
+
+P016_pvt_plot <- ggplot(P016_pvt_data , aes(x=Trials, y=RT))+
+  geom_col()+
+  scale_y_continuous(expand = expansion(mult = c(0, .1)))+
+  geom_hline(yintercept = 500, color="red")+theme_bw()+
+  geom_hline(yintercept = 100, color="green")+
+  theme(axis.text.x = element_text(angle = 90))+labs(title = "P016")+
+  theme(axis.text.x = element_text(size = 6))+
+  labs(x="Trial", y="RT (ms)")
+
+ggsave("Figures/apvt/P016_pvt_plot.png",P016_pvt_plot, width = 8, height = 3.5,
+       dpi = 300, bg = "white", units = "in")
+
+
+#P017
+P017_pvt_plot <- ggplot(P017_pvt_data , aes(x=Trials, y=RT))+
+  geom_col()+
+  scale_y_continuous(expand = expansion(mult = c(0, .1)))+
+  geom_hline(yintercept = 500, color="red")+theme_bw()+
+  geom_hline(yintercept = 100, color="green")+
+  theme(axis.text.x = element_text(angle = 90))+labs(title = "P017")+
+  theme(axis.text.x = element_text(size = 6))+
+  labs(x="Trial", y="RT (ms)")
+
+ggsave("Figures/apvt/P017_pvt_plot.png",P017_pvt_plot, width = 8, height = 3.5,
+       dpi = 300, bg = "white", units = "in")
+
+
+#P018
+P018_pvt_plot <- ggplot(P018_pvt_data , aes(x=Trials, y=RT))+
+  geom_col()+
+  scale_y_continuous(expand = expansion(mult = c(0, .1)))+
+  geom_hline(yintercept = 500, color="red")+theme_bw()+
+  geom_hline(yintercept = 100, color="green")+
+  theme(axis.text.x = element_text(angle = 90))+labs(title = "P018")+
+  theme(axis.text.x = element_text(size = 6))+
+  labs(x="Trial", y="RT (ms)")
+
+ggsave("Figures/apvt/P018_pvt_plot.png",P018_pvt_plot, width = 8, height = 3.5,
+       dpi = 300, bg = "white", units = "in")
+
+#P019
+P019_pvt_plot <- ggplot(P019_pvt_data , aes(x=Trials, y=RT))+
+  geom_col()+
+  scale_y_continuous(expand = expansion(mult = c(0, .1)))+
+  geom_hline(yintercept = 500, color="red")+theme_bw()+
+  geom_hline(yintercept = 100, color="green")+
+  theme(axis.text.x = element_text(angle = 90))+labs(title = "P019")+
+  theme(axis.text.x = element_text(size = 6))+
+  labs(x="Trial", y="RT (ms)")
+
+ggsave("Figures/apvt/P019_pvt_plot.png",P019_pvt_plot, width = 8, height = 3.5,
+       dpi = 300, bg = "white", units = "in")
+
+
+#P020
+P020_pvt_plot <- ggplot(P020_pvt_data , aes(x=Trials, y=RT))+
+  geom_col()+
+  scale_y_continuous(expand = expansion(mult = c(0, .1)))+
+  geom_hline(yintercept = 500, color="red")+theme_bw()+
+  geom_hline(yintercept = 100, color="green")+
+  theme(axis.text.x = element_text(angle = 90))+labs(title = "P020")+
+  theme(axis.text.x = element_text(size = 6))+
+  labs(x="Trial", y="RT (ms)")
+ggsave("Figures/apvt/P020_pvt_plot.png",P020_pvt_plot, width = 8, height = 3.5,
+       dpi = 300, bg = "white", units = "in")
+
+
+#P021
+
+P021_pvt_plot <- ggplot(P021_pvt_data , aes(x=Trials, y=RT))+
+  geom_col()+
+  scale_y_continuous(expand = expansion(mult = c(0, .1)))+
+  geom_hline(yintercept = 500, color="red")+theme_bw()+
+  geom_hline(yintercept = 100, color="green")+
+  theme(axis.text.x = element_text(angle = 90))+labs(title = "P021")+
+  theme(axis.text.x = element_text(size = 6))+
+  labs(x="Trial", y="RT (ms)")
+
+ggsave("Figures/apvt/P021_pvt_plot.png",P021_pvt_plot, width = 8, height = 3.5,
+       dpi = 300, bg = "white", units = "in")
+
+#P022
+P022_pvt_plot <- ggplot(P022_pvt_data , aes(x=Trials, y=RT))+
+  geom_col()+
+  scale_y_continuous(expand = expansion(mult = c(0, .1)))+
+  geom_hline(yintercept = 500, color="red")+theme_bw()+
+  geom_hline(yintercept = 100, color="green")+
+  theme(axis.text.x = element_text(angle = 90))+labs(title = "P022")+
+  theme(axis.text.x = element_text(size = 6))+
+  labs(x="Trial", y="RT (ms)")
+
+ggsave("Figures/apvt/P022_pvt_plot.png",P022_pvt_plot, width = 8, height = 3.5,
+       dpi = 300, bg = "white", units = "in")
+
+#P023
+P023_pvt_plot <- ggplot(P023_pvt_data , aes(x=Trials, y=RT))+
+  geom_col()+
+  scale_y_continuous(expand = expansion(mult = c(0, .1)))+
+  geom_hline(yintercept = 500, color="red")+theme_bw()+
+  geom_hline(yintercept = 100, color="green")+
+  theme(axis.text.x = element_text(angle = 90))+labs(title = "P023")+
+  theme(axis.text.x = element_text(size = 6))+
+  labs(x="Trial", y="RT (ms)")
+
+ggsave("Figures/apvt/P023_pvt_plot.png",P023_pvt_plot, width = 8, height = 3.5,
+       dpi = 300, bg = "white", units = "in")
+
+#P024
+P024_pvt_plot <- ggplot(P024_pvt_data , aes(x=Trials, y=RT))+
+  geom_col()+
+  scale_y_continuous(expand = expansion(mult = c(0, .1)))+
+  geom_hline(yintercept = 500, color="red")+theme_bw()+
+  geom_hline(yintercept = 100, color="green")+
+  theme(axis.text.x = element_text(angle = 90))+labs(title = "P024")+
+  theme(axis.text.x = element_text(size = 6))+
+  labs(x="Trial", y="RT (ms)")
+
+ggsave("Figures/apvt/P024_pvt_plot.png",P024_pvt_plot, width = 8, height = 3.5,
+       dpi = 300, bg = "white", units = "in")
+
+#P025
+
+P025_pvt_plot <- ggplot(P025_pvt_data , aes(x=Trials, y=RT))+
+  geom_col()+
+  scale_y_continuous(expand = expansion(mult = c(0, .1)))+
+  geom_hline(yintercept = 500, color="red")+theme_bw()+
+  geom_hline(yintercept = 100, color="green")+
+  theme(axis.text.x = element_text(angle = 90))+labs(title = "P025")+
+  theme(axis.text.x = element_text(size = 6))+
+  labs(x="Trial", y="RT (ms)")
+
+ggsave("Figures/apvt/P025_pvt_plot.png",P025_pvt_plot, width = 8, height = 3.5,
+       dpi = 300, bg = "white", units = "in")
+
+
+
+
+
+
+
+p1_mean <- mean(P001_pvt_data$RT)
+p2_mean <- mean(P002_pvt_data$RT)
+p3_mean <- mean(P003_pvt_data$RT)
+p4_mean <- mean(P004_pvt_data$RT)
+p5_mean <- mean(P005_pvt_data$RT)
+p6_mean <- mean(P006_pvt_data$RT)
+p7_mean <- mean(P007_pvt_data$RT)
+p8_mean <- mean(P008_pvt_data$RT)
+p9_mean <- mean(P009_pvt_data$RT)
+p10_mean <- mean(P010_pvt_data$RT)
+p11_mean <- mean(P011_pvt_data$RT)
+p12_mean <- mean(P023_pvt_data$RT)
+p14_mean <- mean(P014_pvt_data$RT)
+p15_mean <- mean(P015_pvt_data$RT)
+p16_mean <- mean(P016_pvt_data$RT)
+p17_mean <- mean(P017_pvt_data$RT)
+p18_mean <- mean(P018_pvt_data$RT)
+p19_mean <- mean(P019_pvt_data$RT)
+p20_mean <- mean(P020_pvt_data$RT)
+p21_mean <- mean(P021_pvt_data$RT)
+p22_mean <- mean(P022_pvt_data$RT)
+p23_mean <- mean(P023_pvt_data$RT)
+p24_mean <- mean(P024_pvt_data$RT)
+p25_mean <- mean(P025_pvt_data$RT)
+
+
+rt <- rbind(p1_mean,p2_mean,p3_mean,p4_mean,p5_mean,p6_mean,p7_mean,p8_mean,p9_mean,p10_mean,p11_mean,p12_mean,p14_mean,p15_mean,p16_mean,p17_mean,p18_mean,p19_mean,p20_mean,p21_mean,p22_mean,p23_mean,p24_mean,p25_mean)
+
+
+rt_data <- as.data.frame(cbind(data$light_conditions,rt))
+colnames(rt_data) <- c("Light_Settings", "RT")
+
+
+rt_data$RT <- as.numeric(rt_data$RT)
+rt_data$Light_Settings <- as.factor(rt_data$Light_Settings)
+apvt_rt_model <- aov(1/RT ~ Light_Settings, data = rt_data)
+apvt_rt_anova_summary <- summary(apvt_rt_model )
+
+effectsize::effectsize(apvt_rt_model )
+
+TukeyHSD(apvt_rt_model , data = rt_data)
+
+
+aPVT_summary <-rt_data %>% 
   group_by(Light_Settings) %>% 
-  summarise(Mean_rt=mean(aPVT_RT*1000),
-            SEM_rt = sd(aPVT_RT*1000) / sqrt(n()),
-            Mean_miss=mean(total_miss_aPVT),
-            SEM_miss = sd(total_miss_aPVT) / sqrt(n()),
-            Mean_fast=mean(`10%_fastest`),
-            SEM_fast = sd(`10%_fastest`) / sqrt(n()))
-
-# Robust variation of ANOVA: not significant effect
-aPVT$Light_Settings <- as.factor(aPVT$Light_Settings)
+  summarise(Mean_rt=mean(RT),
+            SEM_rt = sd(RT) / sqrt(n()))
 
 
 
-apvt_rt_robust_model <- WRS2::t1way(aPVT_RT*1000 ~ Light_Settings, data = aPVT, tr=.1,nboot = 1000)
+#P001
+P001_miss <- nrow(P001_pvt_data[P001_pvt_data$RT>500, ])
 
-apvt_miss_robust_model <- WRS2::t1way(total_miss_aPVT ~ Light_Settings, data = aPVT,tr=.1,nboot = 1000)
+#P002
+P002_miss <- nrow(P002_pvt_data[P002_pvt_data$RT>500, ])
 
-apvt_fast_robust_model <- WRS2::t1way(`10%_fastest` ~ Light_Settings, data = aPVT,tr=.1,nboot = 1000)
+#P003
+P003_miss <- nrow(P003_pvt_data[P003_pvt_data$RT>500, ])
+#P004
+P004_miss <- nrow(P004_pvt_data[P004_pvt_data$RT>500, ])
+
+#P005
+P005_miss <- nrow(P005_pvt_data[P005_pvt_data$RT>500, ])
+
+#P006
+P006_miss <- nrow(P006_pvt_data[P006_pvt_data$RT>500, ])
+
+#P007
+P007_miss <- nrow(P007_pvt_data[P007_pvt_data$RT>500, ])
+
+
+#P008
+P008_miss <- nrow(P008_pvt_data[P008_pvt_data$RT>500, ])
+
+
+#P009
+P009_miss <- nrow(P009_pvt_data[P009_pvt_data$RT>500, ])
+
+
+#P010
+P010_miss <- nrow(P010_pvt_data[P010_pvt_data$RT>500, ])
+
+
+#P011
+P011_miss <- nrow(P011_pvt_data[P011_pvt_data$RT>500, ])
+
+
+#P013
+P013_miss <- nrow(P013_pvt_data[P013_pvt_data$RT>500, ])
+
+
+#P014
+P014_miss <- nrow(P014_pvt_data[P014_pvt_data$RT>500, ])
+
+
+#P015
+P015_miss <- nrow(P015_pvt_data[P015_pvt_data$RT>500, ])
+
+
+#P016
+
+P016_miss <- nrow(P016_pvt_data[P016_pvt_data$RT>500, ])
+
+
+#P017
+P017_miss <- nrow(P017_pvt_data[P017_pvt_data$RT>500, ])
+
+
+
+#P018
+P018_miss <- nrow(P018_pvt_data[P018_pvt_data$RT>500, ])
+
+#P019
+
+P019_miss <- nrow(P019_pvt_data[P019_pvt_data$RT>500, ])
+
+
+#P020
+P020_miss <- nrow(P020_pvt_data[P020_pvt_data$RT>500, ])
+
+
+#P021
+
+P021_miss <- nrow(P021_pvt_data[P021_pvt_data$RT>500, ])
+
+#P022
+
+P022_miss <- nrow(P022_pvt_data[P022_pvt_data$RT>500, ])
+
+
+
+#P023
+
+P023_miss <- nrow(P023_pvt_data[P023_pvt_data$RT>500, ])
+
+#P024
+P024_miss <- nrow(P024_pvt_data[P024_pvt_data$RT>500, ])
+
+
+
+#P025
+
+P025_miss <- nrow(P025_pvt_data[P025_pvt_data$RT>500, ])
+
+
+
+#PVT Misses
+
+pvt_miss <- rbind(P001_miss,P002_miss,P003_miss,P004_miss,P005_miss,P006_miss,P007_miss,
+                  P008_miss,P009_miss,P010_miss,P011_miss,P013_miss,P014_miss,P015_miss,
+                  P016_miss,P017_miss,P018_miss,P019_miss,P020_miss,P021_miss,P022_miss,
+                  P023_miss,P024_miss,P025_miss)
+
+
+miss_data <- as.data.frame(cbind(data$light_conditions,pvt_miss  ))
+colnames(miss_data) <- c("Light_Settings", "Miss")
 
 
 
 
+miss_transform <- sqrt(pvt_miss)+sqrt(pvt_miss+1)
+miss_transform_data <- as.data.frame(cbind(data$light_conditions,miss_transform ))
+colnames(miss_transform_data) <- c("Light_Settings", "Miss")
 
+miss_transform_data$Miss <- as.numeric(miss_transform_data$Miss)
+
+apvt_miss_model <- aov(Miss ~ Light_Settings, data = miss_transform_data)
+apvt_miss_anova_summary <- summary(apvt_miss_model )
+effectsize::effectsize(apvt_miss_model)
+TukeyHSD(apvt_miss_model , data = miss_transform_data)
+pairwise.t.test(miss_transform_data$Miss, miss_transform_data$Light_Settings, p.adj='bonferroni')
+
+
+summary <-miss_transform_data %>% 
+  group_by(Light_Settings) %>% 
+  summarise(Mean=mean(Miss, na.rm = T),
+            SEM = sd(Miss) / sqrt(n()))
 
 
 ```
 
 ```{r PVT-rt-anova-plot,include=FALSE}
-metadata_pvt <- aPVT %>%
+metadata_pvt <- rt_data %>%
   mutate(Condition = factor(Light_Settings,
                                levels=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"
                                         )))
 
-metadata_pvt$aPVT_RT2 <- metadata_pvt$aPVT_RT*1000
 
 pvt_rt_plot <- metadata_pvt %>%
-  ggplot(aes(x= Light_Settings, y = aPVT_RT2, fill = Light_Settings)) +
-  stat_summary(fun.data = mean_se,  geom = "errorbar", width =0.5)+ 
+  ggplot(aes(x= Light_Settings, y = RT, fill = Light_Settings)) +
+  # geom_boxplot(show.legend = FALSE)+
+  stat_summary(fun.data = mean_se,  geom = "errorbar", width =0.5)+
   stat_summary(fun.data = mean_se, geom = "bar", show.legend = FALSE,width = .5, alpha=1)+
   # geom_jitter(show.legend=FALSE, width=0.25, shape=21, color="black") +
   labs(x=NULL,
-       y="General Reaction Time (ms)")+
+       y="Reaction Time (ms)")+
   scale_x_discrete(breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
                    labels=c(Low, Neutral, High))+
   scale_fill_manual(name=NULL,
@@ -499,13 +1073,17 @@ pvt_rt_plot <- metadata_pvt %>%
   theme(axis.text.x = element_markdown())+
   scale_y_continuous(expand = expansion(mult = c(0, .1)))
 
+# library(ggpubr)
+# my_comparisons <- list( c("MELR 0.5_low", "MELR 0.7_neutral"), c("MELR 0.5_low", "MELR 1.0_high"), c("MELR 0.7_neutral", "MELR 1.0_high") )
+# pvt_rt_plot+stat_compare_means(comparisons = my_comparisons)
+# 
 
 lines <- tibble(
   Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
              levels = c(Low, Neutral, High)),
   x_lines = c(1,1,2),
   xend_lines = c(1.95,3,3),
-  y_lines = c(600, 650, 600),
+  y_lines = c(600, 660, 600),
   yend_lines = y_lines
   
 )
@@ -538,7 +1116,7 @@ stars <- tibble(
   x = c(1.5,2, 2.5),
   
   y = c(630, 680, 630),
-  label =c("n.s",  "n.s", "n.s")
+  label =c("n.s",  "*", "n.s")
 )
 
 
@@ -546,86 +1124,7 @@ anova_pvt_rt_plot <- pvt_rt_plot +
   geom_segment(data=lines, aes(x =x_lines, xend =xend_lines, y=y_lines, yend=yend_lines), inherit.aes = F)+
   geom_segment(data=vlines_left, aes(x =x_vlines_left, xend =xend_vlines_left, y=y_vlines_left, yend=yend_vlines_left), inherit.aes = F)+
   geom_segment(data=vlines_right, aes(x =x_vlines_right, xend =xend_vlines_right, y=y_vlines_right, yend=yend_vlines_right), inherit.aes = F)+
-geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 3) 
-
-
-# ggsave("Figures/anova_pvt_miss.png", width=4.5, height=3.5)
-
-```
-
-```{r PVT-fast-anova-plot,include=FALSE}
-metadata_pvt <- aPVT %>%
-  mutate(Condition = factor(Light_Settings,
-                               levels=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"
-                                        )))
-
-metadata_pvt$`10%_fastest2` <- metadata_pvt$`10%_fastest`*1000
-
-pvt_fast_plot <- metadata_pvt %>%
-  ggplot(aes(x= Light_Settings, y = `10%_fastest2`, fill = Light_Settings)) +
-  stat_summary(fun.data = mean_se, geom = "errorbar", width =0.5)+ 
-  stat_summary(fun.data = mean_se, geom = "bar", show.legend = FALSE,width = .5, alpha=1)+
-  # geom_jitter(show.legend=FALSE, width=0.25, shape=21, color="black") +
-  labs(x=NULL,
-       y="10% Fastest Reaction Time (ms)")+
-  scale_x_discrete(breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
-                   labels=c(Low, Neutral, High))+
-  scale_fill_manual(name=NULL,
-                    breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
-                    labels=c(Low, Neutral, High),
-                    values=c(Low_color, Neutral_color, High_color)) +
-  apatheme +
-  theme(axis.text.x = element_markdown())+
-  scale_y_continuous(expand = expansion(mult = c(0, .1)))
-
-
-lines <- tibble(
-  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
-             levels = c(Low, Neutral, High)),
-  x_lines = c(1,1,2),
-  xend_lines = c(1.95,3,3),
-  y_lines = c(400, 450, 400),
-  yend_lines = y_lines
-  
-)
-
-
-vlines_left <- tibble(
-  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
-             levels = c(Low, Neutral, High)),
-  x_vlines_left = lines$x_lines,
-  xend_vlines_left = lines$x_lines,
-  y_vlines_left = lines$y_lines-10,
-  yend_vlines_left = lines$y_lines
-  
-)
-
-vlines_right <- tibble(
-  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
-             levels = c(Low, Neutral, High)),
-  x_vlines_right  = lines$xend_lines,
-  xend_vlines_right = lines$xend_lines,
-  y_vlines_right = vlines_left$y_vlines_left,
-  yend_vlines_right = lines$y_lines
-  
-)
-
-stars <- tibble(
-  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
-             levels = c(Low, Neutral, High)),
-  
-  x = c(1.5,2, 2.5),
-  
-  y = c(420, 470, 420),
-  label =c("n.s",  "n.s", "n.s")
-)
-
-
-anova_pvt_fast_plot <- pvt_fast_plot  +
-  geom_segment(data=lines, aes(x =x_lines, xend =xend_lines, y=y_lines, yend=yend_lines), inherit.aes = F)+
-  geom_segment(data=vlines_left, aes(x =x_vlines_left, xend =xend_vlines_left, y=y_vlines_left, yend=yend_vlines_left), inherit.aes = F)+
-  geom_segment(data=vlines_right, aes(x =x_vlines_right, xend =xend_vlines_right, y=y_vlines_right, yend=yend_vlines_right), inherit.aes = F)+
-geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 3) 
+geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 5) 
 
 
 # ggsave("Figures/anova_pvt_miss.png", width=4.5, height=3.5)
@@ -633,16 +1132,17 @@ geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 3)
 ```
 
 ```{r PVT-miss-anova-plot,include=FALSE}
-metadata_pvt <- aPVT %>%
+metadata_pvt <- miss_data %>%
   mutate(Condition = factor(Light_Settings,
                                levels=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"
                                         )))
 
-
+metadata_pvt$Miss <- as.numeric(metadata_pvt$Miss)
 
 pvt_miss_plot <- metadata_pvt %>%
-  ggplot(aes(x= Light_Settings, y = total_miss_aPVT, fill = Light_Settings)) +
-  stat_summary(fun.data = mean_se, geom = "errorbar", width =0.5)+ 
+  ggplot(aes(x= Light_Settings, y = Miss, fill = Light_Settings)) +
+  # geom_boxplot(show.legend = FALSE)+
+  stat_summary(fun.data = mean_se, geom = "errorbar", width =0.5)+
   stat_summary(fun.data = mean_se, geom = "bar", show.legend = FALSE,width = .5, alpha=1)+
   # geom_jitter(show.legend=FALSE, width=0.25, shape=21, color="black") +
   labs(x=NULL,
@@ -663,7 +1163,7 @@ lines <- tibble(
              levels = c(Low, Neutral, High)),
   x_lines = c(1,1,2),
   xend_lines = c(1.95,3,3),
-  y_lines = c(15, 17, 15),
+  y_lines = c(18, 20, 18),
   yend_lines = y_lines
   
 )
@@ -696,7 +1196,7 @@ stars <- tibble(
   x = c(1.5,2, 2.5),
   
   y = lines$y_lines+1,
-  label =c("n.s",  "n.s", "n.s")
+  label =c("*",  "*", "n.s")
 )
 
 
@@ -704,46 +1204,25 @@ anova_pvt_miss_plot <- pvt_miss_plot  +
   geom_segment(data=lines, aes(x =x_lines, xend =xend_lines, y=y_lines, yend=yend_lines), inherit.aes = F)+
   geom_segment(data=vlines_left, aes(x =x_vlines_left, xend =xend_vlines_left, y=y_vlines_left, yend=yend_vlines_left), inherit.aes = F)+
   geom_segment(data=vlines_right, aes(x =x_vlines_right, xend =xend_vlines_right, y=y_vlines_right, yend=yend_vlines_right), inherit.aes = F)+
-geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 3) 
+geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 5) 
 
 
 # ggsave("Figures/anova_pvt_miss.png", width=4.5, height=3.5)
 
 ```
 
-```{r eval=FALSE, include=FALSE}
-#Publication plot
-
-library(ggsignif)
-
-b <- ggplot(aPVT, aes(x = Light_Settings, y = aPVT_RT)) +
- stat_summary(fun.data = mean_se, geom = "errorbar", width =0.5)+ 
-  stat_summary(fun.data = mean_se, geom = "bar", show.legend = FALSE,width = .5)+
-  geom_jitter(show.legend=FALSE, width=0.25, shape=21, color="black")+
-  scale_x_discrete() + xlab("Light Settings") +
-  ylab("Reaction Time") +
-  geom_signif( comparisons = list(c("MELR 1.0_high", "MELR 0.7_neutral"), c("MELR 0.7_neutral","MELR 0.5_low"),c("MELR 1.0_high", "MELR 0.5_low")), map_signif_level=T,step_increase=T)
-
-```
-
-```{r eval=FALSE, include=FALSE}
-robust <- t1way(aPVT_RT~Light_Settings, aPVT, alpha = 0.05, tr =.2,nboot = 1000)
-t1way(aPVT_RT~Light_Settings, aPVT, alpha = 0.05) #Median
-lincon(aPVT_RT~Light_Settings, aPVT, alpha = 0.05, tr =.1,nboot = 1000)#Robust posthoc
-
-```
 
 ```{r alerting-plot, include =F}
 
-alertness_plot <- cowplot::plot_grid(anova_kss_plot, anova_pvt_rt_plot , anova_pvt_fast_plot,anova_pvt_miss_plot,
+alertness_plot <- cowplot::plot_grid(anova_kss_plot, anova_pvt_rt_plot ,anova_pvt_miss_plot,
                             
                    labels = "AUTO",
-                   ncol=2,nrow=2,
-                   label_size = 7,
+                   ncol=3,nrow=1,
+                   label_size = 12,
                   align = "v",
                   label_fontfamily = "Arial",
                   label_fontface = "plain")
-ggsave("Figures/Figure2.png",alertness_plot, width=7, height=4.5)
+ggsave("Figures/Figure2.png",alertness_plot, width=10, height=3.5)
 
 
 
@@ -760,18 +1239,26 @@ knitr::include_graphics('Figures/alertness.png', dpi =300)
 
 ## Working Memory and Executive Functioning
 
-We observed a significant differences in forward digit span task across the three light settings [F(2,12.14)=4.99, p=0.03, $\xi$ = 0.59 (CI: 0.34-0.82)]. Post-hoc tests revealed that participants performaed significantly better in Neutral condition compared to Low light condition ($\hat{\psi}$=-1.57, p<0.04). No other pair-wise comparison in Forward digit span was significant. We did not observe any significant differences in backward [F(2,12.11)=0.33, p=0.72, $\xi$ = 0.37 (CI: 0.07-0.88)] and sequential digit span task performance [F(2,12.05)=0.54, p=0.60, $\xi$ = 0.41 (CI: 0.1-0.74)].
 
-In the ToL task we observed a significant effect of light condition on execution time [F(2,11.47)=4.38, p=0.04, $\xi$ = 0.59 (CI: 0.31-0.85)]. Participants under Low light condition had signifiacntly lower efficiency than participants under neutral light condition ($\hat{\psi}$=-10.89, p<0.04). We did not observe any significant influence of light on efficiency [F(2,12.56)=0.11, p=0.90, $\xi$ = 0.31 (CI: 0.06-0.68)] and planning time [F(2,10.57)=1.20, p=0.34, $\xi$ = 0.48 (CI: 0.16-1.04)] in the ToL task.
-
-In N-back task we observed a significant main effect of task difficulty where participants had significantly faster reaction time [F(1,11.76)=45.71, p<0.001, $\xi$ = 0.88 (CI: 0.78-0.98)]  and higher accuracy [F(1,6.72)=44.43, p<0.001, $\xi$ = 0.94 (CI: 0.75-0.99)] in the easy blocks (one back) compared to difficult blocks (two-blocks). However, we did not observe any significant effect of light condition on reaction time [F(2,9.26)=2.90, p=0.10, $\xi$ = 0.41 (CI: 0-0.79)], accuracy [F(2,6.11)=1.24, p=0.35, $\xi$ = 0.14 (CI: 0-0.68)],hit ratio [F(2,7.05)=2.82, p=0.13, $\xi$ = 0.13 (CI: 0-0.60)], false alarm [F(2,5.7)=1.28, p=0.35, $\xi$ = 0.24 (CI: 0-0.81)], sensitivity [F(2,2.91)=1.22, p=0.41, $\xi$ = 0.08 (CI: 0-0.61)], bias [F(2,2.67)=3.68, p=0.17, $\xi$ = 0.14 (CI: 0-0.68)].
-
-Further, we observed no significant interaction effect of light condition and task complexity on N back reaction time [F(2,9.25)=1.46, p=0.28, $\xi$ = 0.41 (CI: CI: 0-0.79)] and accuracy [F(2,6.11)=0.32, p=0.74, $\xi$ = 0.14 (CI: 0-0.68)], hit ratio [F(2,7.05)=2.24, p=0.18, $\xi$ = 0.03 (CI: 0-0.56)], false alarm [F(2,5.7)=1.28, p=0.59, $\xi$ = 0.24 (CI: 0-0.78)],sensitivity [F(2,2.91)=0.03, p=0.97, $\xi$ = 0.08 (CI: 0-0.55)], bias [F(2,2.67)=1.41, p=0.38, $\xi$ = 0.71 (CI: 0.18-0.91)].
 
 ```{r digitspan-anova}
 
 digit_span<- data %>% 
   dplyr::select ("Light_Settings", "LDSF", "LSDB", "LDSS")
+
+digit_span_2<- data %>% 
+  dplyr::select ("Participant", "Light_Settings", "LDSF", "LSDB", "LDSS")
+
+digit_span_forward<- data %>% 
+  dplyr::select ("Light_Settings", "LDSF")
+
+
+digit_span_backward<- data %>% 
+  dplyr::select ("Light_Settings", "LSDB")
+
+
+digit_span_sec<- data %>% 
+  dplyr::select ("Light_Settings", "LDSS")
 
 
 
@@ -788,24 +1275,50 @@ digit_span_summary <-digit_span %>%
 
 
 
-digit_span_long <- pivot_longer(digit_span,
-                                cols= 2:4,
+digit_span_long <- pivot_longer(digit_span_2,
+                                cols= 3:5,
                                 names_to = "block",
                                 values_to = "Value")
 
-digit_span_long$Light_Settings <- as.factor(digit_span_long$Light_Settings)
-digit_span_long$block <- as.factor(digit_span_long$block)
 
 
-digit_span_two_way <- WRS2::t2way(Value ~ Light_Settings*block, data = digit_span_long, tr=.1,nboot = 1000)
+
+# digit_span_forward_out <- outadj(digit_span_forward, digit_span_forward$LDSF)
+# digit_span_backward_out <- outadj(digit_span_backward, digit_span_backward$LSDB)
+# digit_span_sec_out <- outadj(digit_span_sec, digit_span_sec$LDSS)
 
 
-forward_robust_model <- WRS2::t1way(LDSF ~ Light_Settings, data = digit_span, tr=.1,nboot = 1000)#Significant
+library(rstatix)
 
-post_hoc_forward <- WRS2::lincon(LDSF ~ Light_Settings, data = digit_span, method="bonferroni", tr=0.1,nboot = 1000)
+dst_model <- digit_span_long%>%
+  anova_test(dv = Value, wid = Participant, within = block, between = Light_Settings)
 
-backward_robust_model <- WRS2::t1way(LSDB ~ Light_Settings, data = digit_span, tr=.1,nboot = 1000)
-sequential_robust_model <- WRS2::t1way(LDSS ~ Light_Settings, data = digit_span, tr=.1,nboot = 1000)
+rstatix::get_anova_table(dst_model ,correction = ("auto"))
+
+dst_tukey<- digit_span_long %>% 
+  tukey_hsd(Value~block) 
+dst_table <- rstatix::get_anova_table(dst_tukey)
+
+
+digit_span_two_way <- aov(Value ~ Light_Settings*block, data = digit_span_long)
+digit_span_two_way_summary <- summary(digit_span_two_way , data=digit_span_long)
+
+digit_span_forward_aov <- aov(LDSF ~ Light_Settings, data = digit_span_forward )
+digit_span_backward_aov <- aov(LSDB ~ Light_Settings, data = digit_span_backward)
+digit_span_secq_aov <- aov(LDSS ~ Light_Settings, data = digit_span_sec)
+
+digit_span_forward_summary <- summary(digit_span_forward_aov)
+digit_span_backward_summary <- summary(digit_span_backward_aov)
+digit_span_secq_summary <- summary(digit_span_secq_aov)
+
+
+TukeyHSD(digit_span_forward_aov , data = digit_span_forward)
+
+
+
+digit_span_forward_eff<- effectsize::effectsize(digit_span_forward_aov)
+digit_span_backward_eff <- effectsize::effectsize(digit_span_backward_aov)
+digit_span_secq_eff <- effectsize::effectsize(digit_span_secq_aov)
 
 
 ```
@@ -815,7 +1328,6 @@ metadata_digit_span <- digit_span %>%
   mutate(Condition = factor(Light_Settings,
                                levels=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"
                                         )))
-
 
 
 forward_plot <- metadata_digit_span %>%
@@ -876,7 +1388,7 @@ stars <- tibble(
   x = c(1.5,2, 2.5),
   
   y = lines$y_lines+.5,
-  label =c("*",  "n.s", "n.s")
+  label =c("p=0.09",  "n.s", "n.s")
 )
 
 
@@ -884,7 +1396,7 @@ anova_forward_plot <-forward_plot +
   geom_segment(data=lines, aes(x =x_lines, xend =xend_lines, y=y_lines, yend=yend_lines), inherit.aes = F)+
   geom_segment(data=vlines_left, aes(x =x_vlines_left, xend =xend_vlines_left, y=y_vlines_left, yend=yend_vlines_left), inherit.aes = F)+
   geom_segment(data=vlines_right, aes(x =x_vlines_right, xend =xend_vlines_right, y=y_vlines_right, yend=yend_vlines_right), inherit.aes = F)+
-geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 3) 
+geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 5) 
 
 # ggsave("Figures/Figure7.png", width=9, height=7)
 
@@ -966,7 +1478,7 @@ anova_backward_plot <-backward_plot +
   geom_segment(data=lines, aes(x =x_lines, xend =xend_lines, y=y_lines, yend=yend_lines), inherit.aes = F)+
   geom_segment(data=vlines_left, aes(x =x_vlines_left, xend =xend_vlines_left, y=y_vlines_left, yend=yend_vlines_left), inherit.aes = F)+
   geom_segment(data=vlines_right, aes(x =x_vlines_right, xend =xend_vlines_right, y=y_vlines_right, yend=yend_vlines_right), inherit.aes = F)+
-geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 3) 
+geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 5) 
 
 # ggsave("Figures/Figure7.png", width=9, height=7)
 
@@ -1048,367 +1560,6 @@ anova_sequential_plot <-sequential_plot +
   geom_segment(data=lines, aes(x =x_lines, xend =xend_lines, y=y_lines, yend=yend_lines), inherit.aes = F)+
   geom_segment(data=vlines_left, aes(x =x_vlines_left, xend =xend_vlines_left, y=y_vlines_left, yend=yend_vlines_left), inherit.aes = F)+
   geom_segment(data=vlines_right, aes(x =x_vlines_right, xend =xend_vlines_right, y=y_vlines_right, yend=yend_vlines_right), inherit.aes = F)+
-geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 3) 
-
-# ggsave("Figures/Figure7.png", width=9, height=7)
-
-# ggsave("Figures/anova_pvt_miss.png", width=4.5, height=3.5)
-
-```
-
-```{r tol-anova}
-
-tol_data<- data %>% 
-  dplyr::select ("Light_Settings", "TOL_efficacy":"TOL_Totaltime")
-
-
-tol_data_summary <-tol_data %>% 
-  group_by(Light_Settings) %>% 
-  summarise(Mean_execution=mean(TOL_Execution),
-            SEM_execution = sd(TOL_Execution) / sqrt(n()),
-            Mean_efficency=mean(TOL_efficacy),
-            SEM_efficency = sd(TOL_efficacy) / sqrt(n()),
-            Mean_planning=mean(ToL_Planning),
-            SEM_planning = sd(ToL_Planning) / sqrt(n()))
-
-
-efficiency_robust_model <- WRS2::t1way(TOL_efficacy ~ Light_Settings, data = tol_data, tr=.1,nboot = 1000)
-
-planning_robust_model <- WRS2::t1way(ToL_Planning ~ Light_Settings, data = tol_data, tr=.1)
-
-execution_robust_model <- WRS2::t1way(TOL_Execution ~ Light_Settings, data = tol_data, tr=.1,nboot = 1000)#Significant
-
-
-totaltime_robust_model <- WRS2::t1way(TOL_Totaltime ~ Light_Settings, data = tol_data, tr=.1,nboot = 1000)#trend
-
-post_hoc_execution <- WRS2::lincon(TOL_Execution ~ Light_Settings, data = tol_data, tr=.1,nboot = 1000)
-post_hoc_totaltime <- WRS2::lincon(TOL_Totaltime ~ Light_Settings, data = tol_data, tr=.1,nboot = 1000)
-
-tol_data$TOL_Execution2 <- tol_data$TOL_Execution*1000
-
-
-```
-
-```{r execution-plot,include=FALSE}
-metadata_tol <- tol_data %>%
-  mutate(Condition = factor(Light_Settings,
-                               levels=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"
-                                        )))
-
-
-
-execution_plot <- metadata_tol %>%
-  ggplot(aes(x= Light_Settings, y = TOL_Execution, fill = Light_Settings)) +
-  # geom_violin(trim=T)+ stat_summary(fun.data=mean_sdl, mult=1, 
-  #                geom="crossbar", width=0.1, color="red")+
-  stat_summary(fun.data = mean_se, geom = "errorbar", width =0.5)+
-  stat_summary(fun.data = mean_se, geom = "bar", show.legend = FALSE,width = .5, alpha=1)+
-  # geom_jitter(show.legend=FALSE, width=0.25, shape=21, color="black") +
-  labs(x=NULL,
-       y="Tower of London: Execution (s)")+
-  scale_x_discrete(breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
-                   labels=c(Low, Neutral, High))+
-  scale_fill_manual(name=NULL,
-                    breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
-                    labels=c(Low, Neutral, High),
-                    values=c(Low_color, Neutral_color, High_color)) +
-  apatheme +
-  theme(axis.text.x = element_markdown())+
-  scale_y_continuous(expand = expansion(mult = c(0, .1)))
-
-
-lines <- tibble(
-  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
-             levels = c(Low, Neutral, High)),
-  x_lines = c(1,1,2),
-  xend_lines = c(1.95,3,3),
-  y_lines = c(37, 40, 37),
-  yend_lines = y_lines
-  
-)
-
-
-vlines_left <- tibble(
-  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
-             levels = c(Low, Neutral, High)),
-  x_vlines_left = lines$x_lines,
-  xend_vlines_left = lines$x_lines,
-  y_vlines_left = lines$y_lines-1,
-  yend_vlines_left = lines$y_lines
-  
-)
-
-vlines_right <- tibble(
-  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
-             levels = c(Low, Neutral, High)),
-  x_vlines_right  = lines$xend_lines,
-  xend_vlines_right = lines$xend_lines,
-  y_vlines_right = vlines_left$y_vlines_left,
-  yend_vlines_right = lines$y_lines
-  
-)
-
-stars <- tibble(
-  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
-             levels = c(Low, Neutral, High)),
-  
-  x = c(1.5,2, 2.5),
-  
-  y = lines$y_lines+1.5,
-  label =c("*",  "n.s", "n.s")
-)
-
-
-anova_execution_plot <-execution_plot +
-  geom_segment(data=lines, aes(x =x_lines, xend =xend_lines, y=y_lines, yend=yend_lines), inherit.aes = F)+
-  geom_segment(data=vlines_left, aes(x =x_vlines_left, xend =xend_vlines_left, y=y_vlines_left, yend=yend_vlines_left), inherit.aes = F)+
-  geom_segment(data=vlines_right, aes(x =x_vlines_right, xend =xend_vlines_right, y=y_vlines_right, yend=yend_vlines_right), inherit.aes = F)+
-geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 3) 
-
-# ggsave("Figures/Figure7.png", width=9, height=7)
-
-# ggsave("Figures/anova_pvt_miss.png", width=4.5, height=3.5)
-
-```
-
-```{r efficency-plot,include=FALSE}
-metadata_tol <- tol_data %>%
-  mutate(Condition = factor(Light_Settings,
-                               levels=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"
-                                        )))
-
-
-
-efficiency_plot <- metadata_tol %>%
-  ggplot(aes(x= Light_Settings, y = TOL_efficacy, fill = Light_Settings)) +
-  # geom_violin(trim=T)+ stat_summary(fun.data=mean_sdl, mult=1, 
-  #                geom="crossbar", width=0.1, color="red")+
-  stat_summary(fun.data = mean_se, geom = "errorbar", width =0.5)+
-  stat_summary(fun.data = mean_se, geom = "bar", show.legend = FALSE,width = .5, alpha=1)+
-  # geom_jitter(show.legend=FALSE, width=0.25, shape=21, color="black") +
-  labs(x=NULL,
-       y="Tower of London: Efficacy")+
-  scale_x_discrete(breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
-                   labels=c(Low, Neutral, High))+
-  scale_fill_manual(name=NULL,
-                    breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
-                    labels=c(Low, Neutral, High),
-                    values=c(Low_color, Neutral_color, High_color)) +
-  apatheme +
-  theme(axis.text.x = element_markdown())+
-  scale_y_continuous(expand = expansion(mult = c(0, .1)))
-
-
-lines <- tibble(
-  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
-             levels = c(Low, Neutral, High)),
-  x_lines = c(1,1,2),
-  xend_lines = c(1.95,3,3),
-  y_lines = c(3, 3.5, 3),
-  yend_lines = y_lines
-  
-)
-
-
-vlines_left <- tibble(
-  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
-             levels = c(Low, Neutral, High)),
-  x_vlines_left = lines$x_lines,
-  xend_vlines_left = lines$x_lines,
-  y_vlines_left = lines$y_lines-0.08,
-  yend_vlines_left = lines$y_lines
-  
-)
-
-vlines_right <- tibble(
-  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
-             levels = c(Low, Neutral, High)),
-  x_vlines_right  = lines$xend_lines,
-  xend_vlines_right = lines$xend_lines,
-  y_vlines_right = vlines_left$y_vlines_left,
-  yend_vlines_right = lines$y_lines
-  
-)
-
-stars <- tibble(
-  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
-             levels = c(Low, Neutral, High)),
-  
-  x = c(1.5,2, 2.5),
-  
-  y = lines$y_lines+.3,
-  label =c("n.s",  "n.s", "n.s")
-)
-
-
-anova_efficency_plot <-efficiency_plot +
-  geom_segment(data=lines, aes(x =x_lines, xend =xend_lines, y=y_lines, yend=yend_lines), inherit.aes = F)+
-  geom_segment(data=vlines_left, aes(x =x_vlines_left, xend =xend_vlines_left, y=y_vlines_left, yend=yend_vlines_left), inherit.aes = F)+
-  geom_segment(data=vlines_right, aes(x =x_vlines_right, xend =xend_vlines_right, y=y_vlines_right, yend=yend_vlines_right), inherit.aes = F)+
-geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 3) 
-
-# ggsave("Figures/Figure7.png", width=9, height=7)
-
-# ggsave("Figures/anova_pvt_miss.png", width=4.5, height=3.5)
-
-```
-
-```{r Planning-plot,include=FALSE}
-metadata_tol <- tol_data %>%
-  mutate(Condition = factor(Light_Settings,
-                               levels=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"
-                                        )))
-
-
-
-planning_plot <- metadata_tol %>%
-  ggplot(aes(x= Light_Settings, y = ToL_Planning, fill = Light_Settings)) +
-  # geom_violin(trim=T)+ stat_summary(fun.data=mean_sdl, mult=1, 
-  #                geom="crossbar", width=0.1, color="red")+
-  stat_summary(fun.data = mean_se, geom = "errorbar", width =0.5)+
-  stat_summary(fun.data = mean_se, geom = "bar", show.legend = FALSE,width = .5, alpha=1)+
-  # geom_jitter(show.legend=FALSE, width=0.25, shape=21, color="black") +
-  labs(x=NULL,
-       y="Tower of London: Planning (s)")+
-  scale_x_discrete(breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
-                   labels=c(Low, Neutral, High))+
-  scale_fill_manual(name=NULL,
-                    breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
-                    labels=c(Low, Neutral, High),
-                    values=c(Low_color, Neutral_color, High_color)) +
-  apatheme +
-  theme(axis.text.x = element_markdown())+
-  scale_y_continuous(expand = expansion(mult = c(0, .1)))
-
-
-lines <- tibble(
-  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
-             levels = c(Low, Neutral, High)),
-  x_lines = c(1,1,2),
-  xend_lines = c(1.95,3,3),
-  y_lines = c(20, 22, 20),
-  yend_lines = y_lines
-  
-)
-
-
-vlines_left <- tibble(
-  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
-             levels = c(Low, Neutral, High)),
-  x_vlines_left = lines$x_lines,
-  xend_vlines_left = lines$x_lines,
-  y_vlines_left = lines$y_lines-0.5,
-  yend_vlines_left = lines$y_lines
-  
-)
-
-vlines_right <- tibble(
-  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
-             levels = c(Low, Neutral, High)),
-  x_vlines_right  = lines$xend_lines,
-  xend_vlines_right = lines$xend_lines,
-  y_vlines_right = vlines_left$y_vlines_left,
-  yend_vlines_right = lines$y_lines
-  
-)
-
-stars <- tibble(
-  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
-             levels = c(Low, Neutral, High)),
-  
-  x = c(1.5,2, 2.5),
-  
-  y = lines$y_lines+1,
-  label =c("n.s",  "n.s", "n.s")
-)
-
-
-anova_plannning_plot <-planning_plot +
-  geom_segment(data=lines, aes(x =x_lines, xend =xend_lines, y=y_lines, yend=yend_lines), inherit.aes = F)+
-  geom_segment(data=vlines_left, aes(x =x_vlines_left, xend =xend_vlines_left, y=y_vlines_left, yend=yend_vlines_left), inherit.aes = F)+
-  geom_segment(data=vlines_right, aes(x =x_vlines_right, xend =xend_vlines_right, y=y_vlines_right, yend=yend_vlines_right), inherit.aes = F)+
-geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 3) 
-
-# ggsave("Figures/Figure7.png", width=9, height=7)
-
-# ggsave("Figures/anova_pvt_miss.png", width=4.5, height=3.5)
-
-```
-
-```{r totoaltime-plot,include=FALSE}
-metadata_tol <- tol_data %>%
-  mutate(Condition = factor(Light_Settings,
-                               levels=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"
-                                        )))
-
-
-
-total_plot <- metadata_tol %>%
-  ggplot(aes(x= Light_Settings, y = TOL_Totaltime, fill = Light_Settings)) +
-  # geom_violin(trim=T)+ stat_summary(fun.data=mean_sdl, mult=1, 
-  #                geom="crossbar", width=0.1, color="red")+
-  stat_summary(fun.data = mean_se, geom = "errorbar", width =0.5)+
-  stat_summary(fun.data = mean_se, geom = "bar", show.legend = FALSE,width = .5, alpha=1)+
-  geom_jitter(show.legend=FALSE, width=0.25, shape=21, color="black") +
-  labs(x=NULL,
-       y="Tower of London: Total Time (s)")+
-  scale_x_discrete(breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
-                   labels=c(Low, Neutral, High))+
-  scale_fill_manual(name=NULL,
-                    breaks=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
-                    labels=c(Low, Neutral, High),
-                    values=c(Low_color, Neutral_color, High_color)) +
-  apatheme +
-  theme(axis.text.x = element_markdown())+
-  scale_y_continuous(expand = expansion(mult = c(0, .1)))
-
-
-lines <- tibble(
-  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
-             levels = c(Low, Neutral, High)),
-  x_lines = c(1,1,2),
-  xend_lines = c(1.95,3,3),
-  y_lines = c(55, 57, 55),
-  yend_lines = y_lines
-  
-)
-
-
-vlines_left <- tibble(
-  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
-             levels = c(Low, Neutral, High)),
-  x_vlines_left = lines$x_lines,
-  xend_vlines_left = lines$x_lines,
-  y_vlines_left = lines$y_lines-0.05,
-  yend_vlines_left = lines$y_lines
-  
-)
-
-vlines_right <- tibble(
-  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
-             levels = c(Low, Neutral, High)),
-  x_vlines_right  = lines$xend_lines,
-  xend_vlines_right = lines$xend_lines,
-  y_vlines_right = vlines_left$y_vlines_left,
-  yend_vlines_right = lines$y_lines
-  
-)
-
-stars <- tibble(
-  Condition = factor(c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"),
-             levels = c(Low, Neutral, High)),
-  
-  x = c(1.5,2, 2.5),
-  
-  y = lines$y_lines+1.1,
-  label =c("n.s",  "n.s", "n.s")
-)
-
-
-anova_total_plot <-total_plot +
-  geom_segment(data=lines, aes(x =x_lines, xend =xend_lines, y=y_lines, yend=yend_lines), inherit.aes = F)+
-  geom_segment(data=vlines_left, aes(x =x_vlines_left, xend =xend_vlines_left, y=y_vlines_left, yend=yend_vlines_left), inherit.aes = F)+
-  geom_segment(data=vlines_right, aes(x =x_vlines_right, xend =xend_vlines_right, y=y_vlines_right, yend=yend_vlines_right), inherit.aes = F)+
 geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 5) 
 
 # ggsave("Figures/Figure7.png", width=9, height=7)
@@ -1416,6 +1567,7 @@ geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 5)
 # ggsave("Figures/anova_pvt_miss.png", width=4.5, height=3.5)
 
 ```
+
 
 ```{r nback-anova}
 #Subseting N-back data
@@ -1429,15 +1581,22 @@ nback_data<- data %>%
 
 #One way anova: one-back 
 
-oneback_acc_robust_model <- WRS2::t1way(One_back_GA ~ Light_Settings, data = nback_data, tr=.1,nboot = 1000)
+oneback_acc_model <- aov(One_back_GA ~ Light_Settings, data = nback_data)
+oneback_acc_model_summary <- summary(oneback_acc_model)
 
-oneback_rt_robust_model <- WRS2::t1way(One_back_rt ~ Light_Settings, data = nback_data, tr=.1,nboot = 1000)
 
+oneback_rt_model <- aov(1/One_back_rt ~ Light_Settings, data = nback_data)
+oneback_rt_model_summary <- summary(oneback_rt_model)
 ##One way anova: two-back
 
-twoback_acc_robust_model <- WRS2::t1way(Three_back_GA ~ Light_Settings, data = nback_data, tr=.1,nboot = 1000)
+twoback_acc_model <- aov(Three_back_GA ~ Light_Settings, data = nback_data)
+twoback_acc_model_summary <- summary(twoback_acc_model )
 
-twoback_rt_robust_model <- WRS2::t1way(Three_back_rt ~ Light_Settings, data = nback_data, tr=.1,nboot = 1000)
+twoback_rt_model <- aov(1/Three_back_rt ~ Light_Settings, data = nback_data)
+twoback_rt_model_summary <- summary(twoback_rt_model )
+TukeyHSD(twoback_rt_model, data=nback_data)
+
+
 
 # Preparing data for twoway anova
 
@@ -1459,6 +1618,9 @@ nback_data_d<- nback_data %>%
 
 nback_data_c <- nback_data %>% 
   dplyr::select(Participant, Light_Settings,One_back_c,Three_back_c  )
+
+
+
 
 
 ## Long data frame  for twoway anova
@@ -1596,74 +1758,76 @@ nback_data_c_summary_task <-nback_data_c_long %>%
   summarise(Mean=mean(Value,na.rm=TRUE),
             SEM = sd(Value,na.rm=TRUE) / sqrt(n()) )
 
-## Setting the factors
-nback_data_rt_long$Light_Settings <- as.factor(nback_data_rt_long$Light_Settings )
-nback_data_rt_long$block <- as.factor(nback_data_rt_long$block)
-
-nback_data_acc_long$Light_Settings <- as.factor(nback_data_acc_long$Light_Settings )
-nback_data_acc_long$block <- as.factor(nback_data_acc_long$block)
-
-nback_data_hr_long$Light_Settings <- as.factor(nback_data_hr_long$Light_Settings )
-nback_data_hr_long$block <- as.factor(nback_data_hr_long$block)
 
 
 
-nback_data_fa_long$Light_Settings <- as.factor(nback_data_fa_long$Light_Settings )
-nback_data_fa_long$block <- as.factor(nback_data_fa_long$block)
+## two-way anova models
+nback_data_rt_long[17,4] <- 1
+
+# nhr_summary <- nhr %>% 
+#   dplyr::group_by(Condition) %>% 
+#   get_summary_stats(HR, type ="mean_se")
+  
+library(rstatix)
+nback_data_rt_long$Speed <- 1/nback_data_rt_long$Value
+
+rt_model <- nback_data_rt_long%>%
+  anova_test(dv = Speed, wid = Participant, within = c(block), between = Light_Settings)
+
+rstatix::get_anova_table(rt_model ,correction = c("auto"))
+
+nrt_tukey<- nback_data_rt_long %>% 
+  tukey_hsd(Speed~Light_Settings) 
+P_table <- rstatix::get_anova_table(nrt_tukey)
 
 
-nback_data_d_long$Light_Settings <- as.factor(nback_data_d_long$Light_Settings )
-nback_data_d_long$block <- as.factor(nback_data_d_long$block)
-
-nback_data_c_long$Light_Settings <- as.factor(nback_data_c_long$Light_Settings )
-nback_data_c_long$block <- as.factor(nback_data_c_long$block)
-
-
-nback_data_rt_long$Value2 <- nback_data_rt_long$Value*1000
-
-## Robust two-way anova models
+# 
+# rt_model <- aov(1/Value ~ Light_Settings*block, data = nback_data_rt_long,id=Participant)
+# effectsize::effectsize(rt_model )
+# 
+# 
+# rt_model_summary <- summary(rt_model)
+# TukeyHSD(rt_model, data = nback_data_rt_long)
 
 
-rt_robust_model <- WRS2::bwtrim(Value2 ~ Light_Settings*block, data = nback_data_rt_long, tr=.1,nboot = 1000, id=Participant)
-
-acc_robust_model <- WRS2::bwtrim(Value ~ Light_Settings*block, data = nback_data_acc_long,id=Participant, tr=.1,nboot = 1000)
-
-hr_robust_model <- WRS2::bwtrim(Value ~ Light_Settings*block, data = nback_data_hr_long,id=Participant, tr=.1,nboot = 1000)
-
-fa_robust_model <- WRS2::bwtrim(Value ~ Light_Settings*block, data = nback_data_fa_long,id=Participant, tr=.1,nboot = 1000)
-
-d_robust_model <- WRS2::bwtrim(Value ~ Light_Settings*block, data = nback_data_d_long,id=Participant, tr=.1,nboot = 1000)
 
 
-c_robust_model <- WRS2::bwtrim(Value ~ Light_Settings*block, data = nback_data_c_long,id=Participant, tr=.1,nboot = 1000)
+acc_model <- nback_data_acc_long%>%
+  anova_test(dv = Value , wid = Participant, within = c(block), between = Light_Settings)
+
+rstatix::get_anova_table(acc_model ,correction = c("auto"))
 
 
-## Estimating the effect size
 
-nrt_effect_block <- WRS2::yuen.effect.ci(Value ~ block, data = nback_data_rt_long)
-nrt_effect_light <- WRS2::yuen.effect.ci(Value ~ Light_Settings, data = nback_data_rt_long)
-nrt_effect_interaction <- WRS2::yuen.effect.ci(Value ~ Light_Settings*block, data = nback_data_rt_long)
+hr_model <- nback_data_hr_long %>% 
+  anova_test(dv = Value , wid = Participant, within = c(block), between = Light_Settings)
 
-nacc_effect_block <- WRS2::yuen.effect.ci(Value ~ block, data = nback_data_acc_long)
-nacc_effect_light <- WRS2::yuen.effect.ci(Value ~ Light_Settings, data = nback_data_acc_long)
-nacc_effect_interaction <- WRS2::yuen.effect.ci(Value ~ Light_Settings*block, data = nback_data_acc_long)
-
-hr_effect_block <- WRS2::yuen.effect.ci(Value ~ block, data = nback_data_hr_long)
-hr_effect_light <- WRS2::yuen.effect.ci(Value ~ Light_Settings, data = nback_data_hr_long)
-hr_effect_interaction <- WRS2::yuen.effect.ci(Value ~ Light_Settings*block, data = nback_data_hr_long)
+rstatix::get_anova_table(hr_model ,correction = c("auto"))
 
 
-fa_effect_block <- WRS2::yuen.effect.ci(Value ~ block, data = nback_data_fa_long)
-fa_effect_light <- WRS2::yuen.effect.ci(Value ~ Light_Settings, data = nback_data_fa_long)
-fa_effect_interaction <- WRS2::yuen.effect.ci(Value ~ Light_Settings*block, data = nback_data_fa_long)
 
-d_effect_block <- WRS2::yuen.effect.ci(Value ~ block, data = nback_data_d_long)
-d_effect_light <- WRS2::yuen.effect.ci(Value ~ Light_Settings, data = nback_data_d_long)
-d_effect_interaction <- WRS2::yuen.effect.ci(Value ~ Light_Settings*block, data = nback_data_d_long)
 
-c_effect_block <- WRS2::yuen.effect.ci(Value ~ block, data = nback_data_c_long)
-c_effect_light <- WRS2::yuen.effect.ci(Value ~ Light_Settings, data = nback_data_c_long)
-c_effect_interaction <- WRS2::yuen.effect.ci(Value ~ Light_Settings*block, data = nback_data_c_long)
+fa_model <- nback_data_fa_long %>% 
+  anova_test(dv = Value , wid = Participant, within = c(block), between = Light_Settings)
+
+rstatix::get_anova_table(fa_model ,correction = c("auto"))
+
+
+d_model  <- nback_data_d_long %>% 
+  anova_test(dv = Value , wid = Participant, within = c(block), between = Light_Settings)
+
+rstatix::get_anova_table(d_model  ,correction = c("auto"))
+
+c_model  <- nback_data_c_long %>% 
+  anova_test(dv = Value , wid = Participant, within = c(block), between = Light_Settings)
+
+rstatix::get_anova_table(c_model  ,correction = c("auto"))
+
+
+
+
+
+
 ```
 
 ```{r Nbackrt,include=FALSE}
@@ -1672,7 +1836,7 @@ metadata_rt <- nback_data_rt_long %>%
                                levels=c("MELR 0.5_low","MELR 0.7_neutral","MELR 1.0_high"
                                         )))
 
-
+metadata_rt$Value2 <- metadata_rt$Value*1000
 
 n_back_rt_plot <- metadata_rt %>%
   ggplot(aes(x= Light_Settings, y = Value2, fill = Light_Settings)) +
@@ -1740,7 +1904,7 @@ anova_n_back_rt_plot <-n_back_rt_plot +
   geom_segment(data=lines, aes(x =x_lines, xend =xend_lines, y=y_lines, yend=yend_lines), inherit.aes = F)+
   geom_segment(data=vlines_left, aes(x =x_vlines_left, xend =xend_vlines_left, y=y_vlines_left, yend=yend_vlines_left), inherit.aes = F)+
   geom_segment(data=vlines_right, aes(x =x_vlines_right, xend =xend_vlines_right, y=y_vlines_right, yend=yend_vlines_right), inherit.aes = F)+
-geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 3) 
+geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 5) 
 
 # ggsave("Figures/Figure7.png", width=9, height=7)
 
@@ -1823,7 +1987,7 @@ anova_n_back_acc_plot <-n_back_acc_plot +
   geom_segment(data=lines, aes(x =x_lines, xend =xend_lines, y=y_lines, yend=yend_lines), inherit.aes = F)+
   geom_segment(data=vlines_left, aes(x =x_vlines_left, xend =xend_vlines_left, y=y_vlines_left, yend=yend_vlines_left), inherit.aes = F)+
   geom_segment(data=vlines_right, aes(x =x_vlines_right, xend =xend_vlines_right, y=y_vlines_right, yend=yend_vlines_right), inherit.aes = F)+
-geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 3) 
+geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 5) 
 
 # ggsave("Figures/Figure7.png", width=9, height=7)
 
@@ -1905,7 +2069,7 @@ anova_n_back_hr_plot <-n_back_hr_plot +
   geom_segment(data=lines, aes(x =x_lines, xend =xend_lines, y=y_lines, yend=yend_lines), inherit.aes = F)+
   geom_segment(data=vlines_left, aes(x =x_vlines_left, xend =xend_vlines_left, y=y_vlines_left, yend=yend_vlines_left), inherit.aes = F)+
   geom_segment(data=vlines_right, aes(x =x_vlines_right, xend =xend_vlines_right, y=y_vlines_right, yend=yend_vlines_right), inherit.aes = F)+
-geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 3) 
+geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 5) 
 
 # ggsave("Figures/Figure7.png", width=9, height=7)
 
@@ -1987,7 +2151,7 @@ anova_n_back_fa_plot <-n_back_fa_plot +
   geom_segment(data=lines, aes(x =x_lines, xend =xend_lines, y=y_lines, yend=yend_lines), inherit.aes = F)+
   geom_segment(data=vlines_left, aes(x =x_vlines_left, xend =xend_vlines_left, y=y_vlines_left, yend=yend_vlines_left), inherit.aes = F)+
   geom_segment(data=vlines_right, aes(x =x_vlines_right, xend =xend_vlines_right, y=y_vlines_right, yend=yend_vlines_right), inherit.aes = F)+
-geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 3) 
+geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 5) 
 
 # ggsave("Figures/Figure7.png", width=9, height=7)
 
@@ -2069,7 +2233,7 @@ anova_n_back_d_plot <-n_back_d_plot +
   geom_segment(data=lines, aes(x =x_lines, xend =xend_lines, y=y_lines, yend=yend_lines), inherit.aes = F)+
   geom_segment(data=vlines_left, aes(x =x_vlines_left, xend =xend_vlines_left, y=y_vlines_left, yend=yend_vlines_left), inherit.aes = F)+
   geom_segment(data=vlines_right, aes(x =x_vlines_right, xend =xend_vlines_right, y=y_vlines_right, yend=yend_vlines_right), inherit.aes = F)+
-geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 3) 
+geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 5) 
 
 # ggsave("Figures/Figure7.png", width=9, height=7)
 
@@ -2143,7 +2307,7 @@ stars <- tibble(
   x = c(1.5,2, 2.5),
   
   y = lines$y_lines+.05,
-  label =c("n.s",  "n.s", "n.s")
+  label =c("n.s",  "*", "n.s")
 )
 
 
@@ -2151,7 +2315,7 @@ anova_n_back_c_plot <-n_back_c_plot +
   geom_segment(data=lines, aes(x =x_lines, xend =xend_lines, y=y_lines, yend=yend_lines), inherit.aes = F)+
   geom_segment(data=vlines_left, aes(x =x_vlines_left, xend =xend_vlines_left, y=y_vlines_left, yend=yend_vlines_left), inherit.aes = F)+
   geom_segment(data=vlines_right, aes(x =x_vlines_right, xend =xend_vlines_right, y=y_vlines_right, yend=yend_vlines_right), inherit.aes = F)+
-geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 3) 
+geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 5) 
 
 # ggsave("Figures/Figure7.png", width=9, height=7)
 
@@ -2162,17 +2326,26 @@ geom_text(data =stars, aes(x=x, y=y, label =label), inherit.aes = F,size = 3)
 
 ```{r executive-function, include =F}
 
-ef_plot <- cowplot::plot_grid(anova_forward_plot,anova_backward_plot, anova_sequential_plot,
-                              anova_execution_plot,anova_efficency_plot,anova_plannning_plot,
-                              anova_n_back_rt_plot, anova_n_back_acc_plot,anova_n_back_hr_plot,anova_n_back_fa_plot,anova_n_back_d_plot,anova_n_back_c_plot,
+digit_span_plot <- cowplot::plot_grid(anova_forward_plot,anova_backward_plot, anova_sequential_plot,
                             
                    labels = "AUTO",
-                   ncol=3,nrow=4,
-                   label_size = 7,
+                   ncol=3,nrow=1,
+                   label_size = 12,
                   align = "v",
                   label_fontfamily = "Arial",
                   label_fontface = "plain")
-ggsave("Figures/Figure3.png",ef_plot, width=10, height=12)
+ggsave("Figures/Figure3.png",digit_span_plot, width=10, height=3.5)
+
+
+ef_plot <- cowplot::plot_grid(anova_n_back_rt_plot, anova_n_back_acc_plot,anova_n_back_hr_plot,anova_n_back_fa_plot,
+                            
+                   labels = "AUTO",
+                   ncol=2,nrow=2,
+                   label_size = 14,
+                  align = "v",
+                  label_fontfamily = "Arial",
+                  label_fontface = "plain")
+ggsave("Figures/Figure4.png",ef_plot, width=10, height=7)
 
 
 
